@@ -9,45 +9,29 @@ then
     exit 1
 fi
 
-TEST_DIR=./testing_directory
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TMP_DIR=$DIR/testing_directory
+TESTS_DIR=$DIR/tests
 CMD=../nggroup
 
 # Clean up first - in case the script didn't successfully exit
-rm -rf $TEST_DIR
+rm -rf $TMP_DIR
 
 # Then set up our new environment and go into it
-mkdir -p $TEST_DIR
-cd $TEST_DIR
+mkdir -p $TMP_DIR
+cd $TMP_DIR
 
 ## <Tests>
 
-
-$CMD siteadd testsite
-# TODO: have this in global vars
-[ -e "sites/.testsite.rules" ]
-
-# Know we can't delete non existent
-! $CMD sitedel testsite2 > /dev/null
-
-$CMD siteadd testsite2
-$CMD sitedel testsite2
-
-
-$CMD groupadd testgroup
-[ -e "groups/testgroup" ]
-
-# Know we can't delete non existent
-! $CMD groupdel testgroup2 > /dev/null
-
-$CMD groupadd testgroup2
-$CMD groupdel testgroup2
-
-
-
+for test_script in $TESTS_DIR/*.sh;
+do
+    env CMD=$CMD $test_script
+done
 
 ## </Tests>
 
 # Clean up here if we get this far
-rm -rf $TEST_DIR
+rm -rf $TMP_DIR
 
 echo "All tests passed"
