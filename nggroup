@@ -31,7 +31,7 @@ site () {
 	siteadd )
 	    if [ -e $file ];
 	    then
-		echo "Error: Site already exists"
+		echo "Error: Site already exists."
 		exit 1
 	    fi
 	    touch $file
@@ -39,10 +39,41 @@ site () {
 	sitedel )
 	    if [ ! -e $file ];
 	    then
-		echo "Error: Site does not exist"
+		echo "Error: Site does not exist."
 		exit 1
 	    fi
-	    rm $(printf $SITES_DIR_FORMAT $2)
+	    rm $file
+	    ;;
+	sitemod )
+	    file=$(printf $SITES_DIR_FORMAT $3)
+	    groupfile=$(printf $GROUP_DIR_FORMAT $4)
+	    case $2 in
+		a )
+		    if [ ! -e $groupfile ];
+		    then
+			echo "Error: Group does not exist"
+			exit 1
+		    fi
+
+		    if [ ! -e $file ];
+		    then
+			echo "Error: Site does not exist"
+			exit 1
+		    fi
+
+		    # check if already there
+		    if grep $4 $file > /dev/null;
+		    then
+			# TODO: more meaningful messages - i.e. Group 'test'
+			echo "Error: Group already exists in site"
+			exit 1
+		    fi
+
+		    echo $4 >> $file
+		    ;;
+		d )
+		    ;;
+	    esac
 	    ;;
     esac
 }
