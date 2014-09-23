@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#HTPASS_DIR=/etc/nginx/htpasswd
+HTPASS_DIR=.
+SITES_DIR=$HTPASS_DIR/sites
+
+if [ "$(id -u)" != "0" ];
+then
+    echo "Error; Must run as root."
+fi
+
+mkdir -p $HTPASS_DIR 
+mkdir -p $SITES_DIR 
+
+
+case $1 in
+    siteadd )
+	touch $SITES_DIR/.$2.rules
+	;;
+    sitedel )
+	rm $SITES_DIR/.$2.rules
+	;;
+esac
+
