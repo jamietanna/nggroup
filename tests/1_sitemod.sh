@@ -5,7 +5,9 @@ len () {
 }
 
 $CMD siteadd testsite
+$CMD siteadd testsite2
 $CMD groupadd testgroup
+$CMD useradd testuser password
 
 # can add
 [ "$(len ./sites/.testsite.rules)" == "0" ]
@@ -34,3 +36,7 @@ $CMD sitemod testsite d gtestgroup
 # with an invalid site
 ! $CMD sitemod testsite2 d gtestgroup > /dev/null
 
+
+$CMD sitemod testsite2 a gtestuser
+grep "testuser" "sites/.testsite2.rules" > /dev/null
+! grep "@testuser" "sites/.testsite2.rules" > /dev/null
