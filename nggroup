@@ -162,10 +162,12 @@ group () {
 	    case $4 in
 		u* )
 		    context_dir_format=$USER_DIR_FORMAT
+		    context_rule_format=$USER_RULE_FORMAT
 		    context_friendly=User
 		    ;;
 		g* )
 		    context_dir_format=$GROUP_DIR_FORMAT
+		    context_rule_format=$GROUP_RULE_FORMAT
 		    context_friendly=Group
 		    ;;
 	    esac
