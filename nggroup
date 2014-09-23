@@ -153,7 +153,8 @@ group () {
 
 	    local context
 	    local context_file
-	    local context_format
+	    local context_dir_format
+	    local context_rule_format
 	    local context_friendly
 
 	    context=$(echo $4 | cut -c 2-)
@@ -161,17 +162,17 @@ group () {
 
 	    case $4 in
 		u* )
-		    context_format=$USER_DIR_FORMAT
+		    context_dir_format=$USER_DIR_FORMAT
 		    context_friendly=User
 		    ;;
 		g* )
-		    context_format=$GROUP_DIR_FORMAT
+		    context_dir_format=$GROUP_DIR_FORMAT
 		    context_friendly=Group
 		    ;;
 	    esac
 
-	    context_file=$(printf $context_format $context)
-	    echo $context_file
+	    context_file=$(printf $context_dir_format $context)
+	    context_insert=$(printf $context_rule_format $context)
 	    
 	    if [ ! -e $context_file ];
 	    then
@@ -182,6 +183,28 @@ group () {
 	    grep $context $group_file > /dev/null
 	    context_in_file=$?
 	    debug "grep $context $group_file == $context_in_file"
+
+	    case $3 in
+		a )
+		    if [ 0 -eq $context_in_file ];
+		    then
+			printf "Error: %s is already part of the group.\n" $context_friendly
+			exit 1
+		    else
+			echo "echo $context_insert >> $group_file"
+		    fi
+		    ;;
+		d )
+		    if [ 0 -eq $context_in_file ];
+		    then
+			echo "sed -i /$context_insert/d $group_file"
+		    else
+			printf "Error: %s does not exist in the group.\n" $context_friendly
+			exit 1
+		    fi
+		    ;;
+	    esac
+
 	    ;;
     esac
 }
