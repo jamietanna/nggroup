@@ -37,6 +37,6 @@ $CMD sitemod testsite d gtestgroup
 ! $CMD sitemod testsite2 d gtestgroup > /dev/null
 
 
-$CMD sitemod testsite2 a gtestuser
+$CMD sitemod testsite2 a utestuser
 grep "testuser" "sites/.testsite2.rules" > /dev/null
 ! grep "@testuser" "sites/.testsite2.rules" > /dev/null
