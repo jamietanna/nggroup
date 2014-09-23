@@ -25,51 +25,51 @@ mkdir -p $GROUP_DIR
 
 
 site () {
-    local file
-    file=$(printf $SITES_DIR_FORMAT $2)
+    local site_file
+    site_file=$(printf $SITES_DIR_FORMAT $2)
     case $1 in
 	siteadd )
-	    if [ -e $file ];
+	    if [ -e $site_file ];
 	    then
 		echo "Error: Site already exists."
 		exit 1
 	    fi
-	    touch $file
+	    touch $site_file
 	    ;;
 	sitedel )
-	    if [ ! -e $file ];
+	    if [ ! -e $site_file ];
 	    then
 		echo "Error: Site does not exist."
 		exit 1
 	    fi
-	    rm $file
+	    rm $site_file
 	    ;;
 	sitemod )
-	    file=$(printf $SITES_DIR_FORMAT $3)
-	    groupfile=$(printf $GROUP_DIR_FORMAT $4)
+	    site_file=$(printf $SITES_DIR_FORMAT $3)
+	    group_file=$(printf $GROUP_DIR_FORMAT $4)
 	    case $2 in
 		a )
-		    if [ ! -e $groupfile ];
+		    if [ ! -e $group_file ];
 		    then
 			echo "Error: Group does not exist"
 			exit 1
 		    fi
 
-		    if [ ! -e $file ];
+		    if [ ! -e $site_file ];
 		    then
 			echo "Error: Site does not exist"
 			exit 1
 		    fi
 
 		    # check if already there
-		    if grep $4 $file > /dev/null;
+		    if grep $4 $site_file > /dev/null;
 		    then
 			# TODO: more meaningful messages - i.e. Group 'test'
 			echo "Error: Group already exists in site"
 			exit 1
 		    fi
 
-		    echo $4 >> $file
+		    echo $4 >> $site_file
 		    ;;
 		d )
 		    ;;
