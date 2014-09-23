@@ -1,8 +1,11 @@
 #!/bin/bash
 
+debug() { echo "$@" 1>&2; }
+
 #HTPASS_DIR=/etc/nginx/htpasswd
 HTPASS_DIR=.
 SITES_DIR=$HTPASS_DIR/sites
+SITES_DIR_FORMAT="$SITES_DIR/.%s.rules"
 
 if [ "$(id -u)" != "0" ];
 then
@@ -15,10 +18,12 @@ mkdir -p $SITES_DIR
 
 case $1 in
     siteadd )
-	touch $SITES_DIR/.$2.rules
+	arg=$(printf $SITES_DIR_FORMAT $2)
+	touch $arg
 	;;
     sitedel )
-	rm $SITES_DIR/.$2.rules
+	arg=$(printf $SITES_DIR_FORMAT $2)
+	rm $arg
 	;;
 esac
 
