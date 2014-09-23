@@ -19,26 +19,55 @@ mkdir -p $HTPASS_DIR
 mkdir -p $SITES_DIR
 mkdir -p $USER_DIR
 
-case $1 in
-    siteadd )
-	touch $(printf $SITES_DIR_FORMAT $2)
-	;;
-    sitedel )
-	rm $(printf $SITES_DIR_FORMAT $2)
-	;;
 
+site () {
+    local file
+    file=$(printf $SITES_DIR_FORMAT $2)
+    case $1 in
+	siteadd )
+	    if [ -e $file ];
+	    then
+		echo "Error: Site already exists"
+		exit 1
+	    fi
+	    touch $file
+	    ;;
+	sitedel )
+	    if [ ! -e $file ];
+	    then
+		echo "Error: Site does not exist"
+		exit 1
+	    fi
+	    rm $(printf $SITES_DIR_FORMAT $2)
+	    ;;
+    esac
+}
+
+user () {
+    local file
+    file=$(printf $USER_DIR_FORMAT $2)
     
-    useradd )
-	file=$(printf $USER_DIR_FORMAT $2)
-	contents=$(htpasswd -nb $2 $3)
-	if [ -e $file ];
-	then
-	    echo "Error: user already exists."
-	    exit 1
-	fi
+    case $1 in
+	useradd )
+	    contents=$(htpasswd -nb $2 $3)
+	    if [ -e $file ];
+	    then
+		echo "Error: user already exists."
+		exit 1
+	    fi
 
-	echo $contents > $file
+	    echo $contents > $file
+	    ;;
+    esac
+}
+
+case $1 in
+    site* )
+	site $@
 	;;
 
+    user* )
+	user $@
+	;;
 esac
 
