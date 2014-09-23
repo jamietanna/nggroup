@@ -48,9 +48,9 @@ site () {
 	    rm $site_file
 	    ;;
 	sitemod )
-	    site_file=$(printf $SITES_DIR_FORMAT $3)
+	    site_file=$(printf $SITES_DIR_FORMAT $2)
 	    group_file=$(printf $GROUP_DIR_FORMAT $4)
-	    case $2 in
+	    case $3 in
 		a )
 		    if [ ! -e $group_file ];
 		    then
