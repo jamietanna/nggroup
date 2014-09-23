@@ -191,13 +191,13 @@ group () {
 			printf "Error: %s is already part of the group.\n" $context_friendly
 			exit 1
 		    else
-			echo "echo $context_insert >> $group_file"
+			echo $context_insert >> $group_file
 		    fi
 		    ;;
 		d )
 		    if [ 0 -eq $context_in_file ];
 		    then
-			echo "sed -i /$context_insert/d $group_file"
+			sed -i /$context_insert/d $group_file
 		    else
 			printf "Error: %s does not exist in the group.\n" $context_friendly
 			exit 1
