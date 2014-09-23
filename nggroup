@@ -18,12 +18,10 @@ mkdir -p $SITES_DIR
 
 case $1 in
     siteadd )
-	arg=$(printf $SITES_DIR_FORMAT $2)
-	touch $arg
+	touch $(printf $SITES_DIR_FORMAT $2)
 	;;
     sitedel )
-	arg=$(printf $SITES_DIR_FORMAT $2)
-	rm $arg
+	rm $(printf $SITES_DIR_FORMAT $2)
 	;;
 esac
 
