@@ -29,4 +29,8 @@ grep testuser2 ./groups/testgroup  > /dev/null
 ! grep testuser2 ./groups/testgroup2 > /dev/null
 
 
-# TODO: test cases for adding a group, not user
+
+[ "$(len ./groups/testgroup2)" == "0" ]
+$CMD groupmod testgroup2 a gtestgroup
+[ "$(len ./groups/testgroup2)" == "1" ]
+grep "@testgroup" ./groups/testgroup2  > /dev/null
