@@ -8,6 +8,8 @@ SITES_DIR=$HTPASS_DIR/sites
 SITES_DIR_FORMAT="$SITES_DIR/.%s.rules"
 USER_DIR=$HTPASS_DIR/users
 USER_DIR_FORMAT="$USER_DIR/%s"
+GROUP_DIR=$HTPASS_DIR/groups
+GROUP_DIR_FORMAT="$GROUP_DIR/%s"
 TMP_FILE=/tmp/nggrouptmp
 
 if [ "$(id -u)" != "0" ];
@@ -18,6 +20,7 @@ fi
 mkdir -p $HTPASS_DIR
 mkdir -p $SITES_DIR
 mkdir -p $USER_DIR
+mkdir -p $GROUP_DIR
 
 
 site () {
@@ -58,6 +61,39 @@ user () {
 
 	    echo $contents > $file
 	    ;;
+	userdel )
+	    if [ ! -e $file ];
+	    then
+		echo "Error: User does not exist."
+		exit 1
+	    fi
+
+	    rm $file
+    esac
+}
+
+group () {
+    local file
+    file=$(printf $GROUP_DIR_FORMAT $2)
+    
+    case $1 in
+	groupadd )
+	    if [ -e $file ];
+	    then
+		echo "Error: group already exists."
+		exit 1
+	    fi
+
+	    touch $file
+	    ;;
+	groupdel )
+	    if [ ! -e $file ];
+	    then
+		echo "Error: Group does not exist."
+		exit 1
+	    fi
+
+	    rm $file
     esac
 }
 
@@ -68,6 +104,10 @@ case $1 in
 
     user* )
 	user $@
+	;;
+
+    group* )
+	group $@
 	;;
 esac
 
