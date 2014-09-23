@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 $CMD useradd testuser password
 # TODO: have this in global vars
 [ -e "users/testuser" ]

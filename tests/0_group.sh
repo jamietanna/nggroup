@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 $CMD groupadd testgroup
 [ -e "groups/testgroup" ]
 

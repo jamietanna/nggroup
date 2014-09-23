@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 len () {
     wc -l $1 | cut -f1 -d" "
 }
