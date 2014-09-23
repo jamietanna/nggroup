@@ -11,4 +11,4 @@ $CMD siteadd testsite2
 $CMD sitedel testsite2
 
 # cleanup
-$CMD sitedel testgroup
+$CMD sitedel testsite
