@@ -14,6 +14,8 @@ $CMD useradd testuser2 password2
 $CMD groupmod testgroup a utestuser
 [ "$(len ./groups/testgroup)" == "1" ]
 grep testuser ./groups/testgroup  > /dev/null
+! grep "@testuser" ./groups/testgroup  > /dev/null
+
 
 # can't readd
 ! $CMD groupmod testgroup a utestuser  > /dev/null
