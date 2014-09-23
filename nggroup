@@ -50,22 +50,26 @@ site () {
 	sitemod )
 	    site_file=$(printf $SITES_DIR_FORMAT $2)
 	    group_file=$(printf $GROUP_DIR_FORMAT $4)
+	    if [ ! -e $group_file ];
+	    then
+		echo "Error: Group does not exist"
+		exit 1
+	    fi
+
+	    if [ ! -e $site_file ];
+	    then
+		echo "Error: Site does not exist"
+		exit 1
+	    fi
+
+	    # check if the group exists in the site's rules
+	    grep $4 $site_file > /dev/null
+	    group_in_site=$?
+
 	    case $3 in
 		a )
-		    if [ ! -e $group_file ];
-		    then
-			echo "Error: Group does not exist"
-			exit 1
-		    fi
-
-		    if [ ! -e $site_file ];
-		    then
-			echo "Error: Site does not exist"
-			exit 1
-		    fi
-
 		    # check if already there
-		    if grep $4 $site_file > /dev/null;
+		    if [ $group_in_site ] ;
 		    then
 			# TODO: more meaningful messages - i.e. Group 'test'
 			echo "Error: Group already exists in site"
@@ -75,6 +79,14 @@ site () {
 		    echo $4 >> $site_file
 		    ;;
 		d )
+		    if [ ! $group_in_site ] ;
+		    then
+			# TODO: rethink error codes?
+			echo "Error: Group does not exist in site"
+			exit 1
+		    fi
+
+		    sed -i /$4/d $site_file
 		    ;;
 	    esac
 	    ;;
