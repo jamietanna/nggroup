@@ -10,8 +10,10 @@ SITES_DIR=$HTPASS_DIR/sites
 SITES_DIR_FORMAT="$SITES_DIR/.%s.rules"
 USER_DIR=$HTPASS_DIR/users
 USER_DIR_FORMAT="$USER_DIR/%s"
+USER_RULE_FORMAT="%s"
 GROUP_DIR=$HTPASS_DIR/groups
 GROUP_DIR_FORMAT="$GROUP_DIR/%s"
+GROUP_RULE_FORMAT="@%s"
 TMP_FILE=/tmp/nggrouptmp
 
 if [ "$(id -u)" != "0" ];
@@ -120,27 +122,67 @@ user () {
 }
 
 group () {
-    local file
-    file=$(printf $GROUP_DIR_FORMAT $2)
+    local group_file
+    group_file=$(printf $GROUP_DIR_FORMAT $2)
     
     case $1 in
 	groupadd )
-	    if [ -e $file ];
+	    if [ -e $group_file ];
 	    then
 		echo "Error: group already exists."
 		exit 1
 	    fi
 
-	    touch $file
+	    touch $group_file
 	    ;;
 	groupdel )
-	    if [ ! -e $file ];
+	    if [ ! -e $group_file ];
 	    then
 		echo "Error: Group does not exist."
 		exit 1
 	    fi
 
-	    rm $file
+	    rm $group_file
+	    ;;
+	groupmod )
+	    if [ ! -e $group_file ];
+	    then
+		echo "Error: Group does not exist"
+		exit 1
+	    fi
+
+	    local context
+	    local context_file
+	    local context_format
+	    local context_friendly
+
+	    context=$(echo $4 | cut -c 2-)
+	    echo $context
+
+	    case $4 in
+		u* )
+		    context_format=$USER_DIR_FORMAT
+		    context_friendly=User
+		    ;;
+		g* )
+		    context_format=$GROUP_DIR_FORMAT
+		    context_friendly=Group
+		    ;;
+	    esac
+
+	    context_file=$(printf $context_format $context)
+	    echo $context_file
+	    
+	    if [ ! -e $context_file ];
+	    then
+		printf "Error: %s does not exist.\n" $context_friendly
+		exit 1
+	    fi
+	    
+	    grep $context $group_file > /dev/null
+	    context_in_file=$?
+	    debug "grep $context $group_file == $context_in_file"
+	    ;;
     esac
 }
 
