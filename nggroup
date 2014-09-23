@@ -158,7 +158,6 @@ group () {
 	    local context_friendly
 
 	    context=$(echo $4 | cut -c 2-)
-	    echo $context
 
 	    case $4 in
 		u* )
@@ -182,7 +181,6 @@ group () {
 	    
 	    grep $context $group_file > /dev/null
 	    context_in_file=$?
-	    debug "grep $context $group_file == $context_in_file"
 
 	    case $3 in
 		a )
