@@ -69,7 +69,7 @@ site () {
 	    case $3 in
 		a )
 		    # check if already there
-		    if [ $group_in_site ] ;
+		    if [ 0 -eq $group_in_site ] ;
 		    then
 			# TODO: more meaningful messages - i.e. Group 'test'
 			echo "Error: Group already exists in site"
@@ -79,7 +79,7 @@ site () {
 		    echo $4 >> $site_file
 		    ;;
 		d )
-		    if [ ! $group_in_site ] ;
+		    if [ 1 -eq $group_in_site ] ;
 		    then
 			# TODO: rethink error codes?
 			echo "Error: Group does not exist in site"
