@@ -15,6 +15,7 @@ TMP_FILE=/tmp/nggrouptmp
 if [ "$(id -u)" != "0" ];
 then
     echo "Error; Must run as root."
+    exit 1
 fi
 
 mkdir -p $HTPASS_DIR
