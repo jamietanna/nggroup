@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 $CMD siteadd testsite
 # TODO: have this in global vars
 [ -e "sites/.testsite.rules" ]
