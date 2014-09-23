@@ -114,7 +114,7 @@ group () {
 mod_funct () {
     if [ ! -e $1 ];
     then
-	printf "> Error: %s does not exist\n" $4
+	printf "Error: %s does not exist\n" $4
 	exit 1
     fi
 
