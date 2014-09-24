@@ -1,6 +1,8 @@
 #!/bin/bash
 
+
 # TODO: need to do *all* validation
+# TODO: case statements have a default case
 
 debug() { echo "$@" 1>&2; }
 
@@ -148,7 +150,8 @@ mod_funct () {
 	exit 1
     fi
 
-    grep $context $1 > /dev/null
+    # TODO: make sure all greps are strict!
+    grep "^$context$" $1 > /dev/null
     context_in_file=$?
 
     case $2 in
@@ -164,7 +167,7 @@ mod_funct () {
 	d )
 	    if [ 0 -eq $context_in_file ];
 	    then
-		sed -i /$context_insert/d $1
+		sed -i /^$context_insert$/d $1
 	    else
 		printf "Error: %s does not exist in the group.\n" $context_friendly
 		exit 1
