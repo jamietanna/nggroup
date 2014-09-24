@@ -3,13 +3,6 @@
 # Kill the script if we have any errors
 set -e
 
-if [ "$(id -u)" != "0" ];
-then
-    echo "Error; Must run as root."
-    exit 1
-fi
-
-
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 WORKING_DIR=$DIR/testing_directory
 TESTS_DIR=$DIR/tests

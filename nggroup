@@ -6,8 +6,13 @@
 
 debug() { echo "$@" 1>&2; }
 
-#HTPASS_DIR=/etc/nginx/htpasswd
-HTPASS_DIR=.
+if [ -z "$NGGROUP_TESTING" ]; 
+then
+    HTPASS_DIR=/etc/nginx/htpasswd
+else
+    HTPASS_DIR=.
+fi
+
 SITES_DIR=$HTPASS_DIR/sites
 SITES_DIR_FORMAT="$SITES_DIR/.%s.rules"
 USER_DIR=$HTPASS_DIR/users
@@ -18,7 +23,7 @@ GROUP_DIR_FORMAT="$GROUP_DIR/%s"
 GROUP_RULE_FORMAT="@%s"
 TMP_FILE=/tmp/nggrouptmp
 
-if [ "$(id -u)" != "0" ];
+if [ -z "$NGGROUP_TESTING" ] && [ "$(id -u)" != "0" ];
 then
     echo "Error; Must run as root."
     exit 1
