@@ -194,14 +194,12 @@ generate_sites () {
 
 	while read -r line
 	do
-	    debug "> $line"
-
 	    local user_list
 
 	    case $(echo $line | cut -c 1) in
 		@ )
 		    group_name=$(echo $line | cut -c 2-)
-		    user_list=$(cat $GROUPS_DIR/$group_name)
+		    user_list=$(cat $GROUP_DIR/$group_name)
 		    echo "# @$group_name" >> $site_file_tmp_path
 		    ;;
 		* )
@@ -212,15 +210,14 @@ generate_sites () {
 
 	    for user in $user_list
 	    do
-		echo "cat users/$user >> $site_file_tmp_pat"
-		cat $GROUPS_DIR/$user >> $site_file_tmp_path
+		cat $USER_DIR/$user >> $site_file_tmp_path
 	    done
 
 	done < $rule_file
 
 	# if we don't have a previous version, or if they're different,
 	#  we prioritise the newly generated file
-	if [ ! -e $site_file_path ] || ! diff $site_file_path $site_file_tmp_path;
+	if [ ! -e $site_file_path ] || ! diff $site_file_path $site_file_tmp_path > /dev/null;
 	then
 	    mv $site_file_tmp_path $site_file_path
 	fi
