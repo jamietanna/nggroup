@@ -125,6 +125,7 @@ mod_funct () {
     local context_dir_format
     local context_rule_format
     local context_friendly
+    local context_in_file_search
 
     context=$(echo $3 | cut -c 2-)
 
@@ -133,11 +134,13 @@ mod_funct () {
 	    context_dir_format=$USER_DIR_FORMAT
 	    context_rule_format=$USER_RULE_FORMAT
 	    context_friendly=User
+	    context_in_file_search=$context
 	    ;;
 	g* )
 	    context_dir_format=$GROUP_DIR_FORMAT
 	    context_rule_format=$GROUP_RULE_FORMAT
 	    context_friendly=Group
+	    context_in_file_search="@$context"
 	    ;;
     esac
 
@@ -151,7 +154,7 @@ mod_funct () {
     fi
 
     # TODO: make sure all greps are strict!
-    grep "^$context$" $1 > /dev/null
+    grep "^$context_in_file_search$" $1 > /dev/null
     context_in_file=$?
 
     case $2 in
