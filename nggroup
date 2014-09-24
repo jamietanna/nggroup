@@ -178,7 +178,7 @@ mod_funct () {
 }
 
 generate_sites () {
-    for rule_file in sites/.*.rules;
+    for rule_file in $SITES_DIR/.*.rules;
     do
 	debug $rule_file
 
@@ -187,7 +187,7 @@ generate_sites () {
 	local site_file_path
 
 	site_name=$(echo $rule_file  | sed 's/.*\.\(.*\)\..*/\1/g')
-	site_file_path=sites/$site_name
+	site_file_path=$SITES_DIR/$site_name
 	site_file_tmp_path=$site_file_path.tmp
 
 	[ -e $site_file_tmp_path ] && rm $site_file_tmp_path
@@ -201,9 +201,7 @@ generate_sites () {
 	    case $(echo $line | cut -c 1) in
 		@ )
 		    group_name=$(echo $line | cut -c 2-)
-		    # debug "$(cat groups/$(echo $line | cut -c 2-))"
-		    user_list=$(cat groups/$group_name)
-		    #debug $user_list
+		    user_list=$(cat $GROUPS_DIR/$group_name)
 		    echo "# @$group_name" >> $site_file_tmp_path
 		    ;;
 		* )
@@ -215,14 +213,15 @@ generate_sites () {
 	    for user in $user_list
 	    do
 		echo "cat users/$user >> $site_file_tmp_pat"
-		cat users/$user >> $site_file_tmp_path
+		cat $GROUPS_DIR/$user >> $site_file_tmp_path
 	    done
 
 	done < $rule_file
 
+	# if we don't have a previous version, or if they're different,
+	#  we prioritise the newly generated file
 	if [ ! -e $site_file_path ] || ! diff $site_file_path $site_file_tmp_path;
 	then
-	    # if they're different, we prioritise the newly generated file
 	    mv $site_file_tmp_path $site_file_path
 	fi
     done
