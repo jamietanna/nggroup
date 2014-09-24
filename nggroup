@@ -188,8 +188,6 @@ mod_funct () {
 generate_sites () {
     for rule_file in $SITES_DIR/.*.rules;
     do
-	debug $rule_file
-
 	local site_file_insert
 	local site_name
 	local site_file_path
