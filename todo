@@ -1,0 +1,6 @@
+- @all
+- validate inputs
+- tests.sh <testname>
+- autocomplete
+- groups can contain groups?
+- circular refs?
