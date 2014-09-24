@@ -177,6 +177,57 @@ mod_funct () {
 
 }
 
+generate_sites () {
+    for rule_file in sites/.*.rules;
+    do
+	debug $rule_file
+
+	local site_file_insert
+	local site_name
+	local site_file_path
+
+	site_name=$(echo $rule_file  | sed 's/.*\.\(.*\)\..*/\1/g')
+	site_file_path=sites/$site_name
+	site_file_tmp_path=$site_file_path.tmp
+
+	[ -e $site_file_tmp_path ] && rm $site_file_tmp_path
+
+	while read -r line
+	do
+	    debug "> $line"
+
+	    local user_list
+
+	    case $(echo $line | cut -c 1) in
+		@ )
+		    group_name=$(echo $line | cut -c 2-)
+		    # debug "$(cat groups/$(echo $line | cut -c 2-))"
+		    user_list=$(cat groups/$group_name)
+		    #debug $user_list
+		    echo "# @$group_name" >> $site_file_tmp_path
+		    ;;
+		* )
+		    echo "# $line" >> $site_file_tmp_path
+		    user_list=$line
+		    ;;
+	    esac
+
+	    for user in $user_list
+	    do
+		echo "cat users/$user >> $site_file_tmp_pat"
+		cat users/$user >> $site_file_tmp_path
+	    done
+
+	done < $rule_file
+
+	if [ ! -e $site_file_path ] || ! diff $site_file_path $site_file_tmp_path;
+	then
+	    # if they're different, we prioritise the newly generated file
+	    mv $site_file_tmp_path $site_file_path
+	fi
+    done
+
+}
 
 
 case $1 in
@@ -190,6 +241,9 @@ case $1 in
 
     group* )
 	group $@
+	;;
+    generate )
+	generate_sites
 	;;
 esac
 
