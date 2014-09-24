@@ -3,5 +3,9 @@ git stash -q --keep-index
 ./tests.sh > /dev/null
 RESULT=$?
 git stash pop -q
-[ $RESULT -ne 0 ] && exit 1
+if [ $RESULT -ne 0 ];
+then
+    echo "Error: Tests failed."
+    exit 1
+fi
 exit 0
