@@ -1,10 +1,12 @@
 set -e
 
+CMD=../nggroup
+
 error_alert () {
-    >&2 echo "Error: test failed at L$@"
+    >&2 echo "Error: test failed at $1:$2"
 }
 
-trap 'error_alert $LINENO' ERR
+trap 'error_alert $0 $LINENO' ERR
 
 len () {
     cat $1 | wc -l 
