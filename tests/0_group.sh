@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+. $(dirname $0)/testing_environ
 
 $CMD groupadd testgroup
 [ -e "groups/testgroup" ]

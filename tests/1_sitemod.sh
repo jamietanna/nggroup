@@ -1,10 +1,6 @@
 #!/bin/bash
 
-set -e
-
-len () {
-    wc -l $1 | cut -f1 -d" "
-}
+. $(dirname $0)/testing_environ
 
 $CMD siteadd testsite
 $CMD siteadd testsite2
