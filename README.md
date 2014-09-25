@@ -7,7 +7,6 @@ nggroup (nginx htgroup) is a method of providing nginx with an emulation of Apac
 ## Known Issues
 
 - No input validation
-- If you delete a user, then `generate`, you will have errors - need to remove from groups
 
 ## Future Features (?)
 
