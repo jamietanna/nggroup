@@ -1,4 +1,4 @@
-# nggroupIn “Basic” HTTP AUTH credentials are sent unencrypted over the wire, which makes HTTP AUTH particularly subject to so called “man-in-the-middle” attacks. As a result, this authentication method shouldn’t be used for protecting sensitive information.
+# nggroup
 
 nggroup (nginx htgroup) is a method of providing nginx with an emulation of Apache's htgroups feature, which allows easy ACL control for basic HTTP authentication. Nginx supports htpasswd, however, which allows us to create a `__TODO__`
 
