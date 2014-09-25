@@ -1,0 +1,11 @@
+set -e
+
+error_alert () {
+    >&2 echo "Error: test failed at L$@"
+}
+
+trap 'error_alert $LINENO' ERR
+
+len () {
+    cat $1 | wc -l 
+}
