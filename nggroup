@@ -114,9 +114,9 @@ group () {
 		exit 1
 	    fi
 
-	    for file_to_remove_from in $(grep -lR "^$2\$" $GROUP_DIR $SITES_DIR);
+	    for file_to_remove_from in $(grep -lR "^@$2\$" $GROUP_DIR $SITES_DIR);
 	    do
-		sed -i "/^$2\$/d" $file_to_remove_from
+		sed -i "/^@$2\$/d" $file_to_remove_from
 	    done
 
 	    rm $group_file
