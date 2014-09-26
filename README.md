@@ -17,3 +17,6 @@ The following features are subject to change, but will most probably be added as
 - autocomplete
 - groups can contain groups?
 - circular refs?
+- pipe through to email/other cmd
+  - user can choose what?
+  - format string
