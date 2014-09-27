@@ -2,24 +2,27 @@
 
 . $(dirname $0)/testing_environ
 
+testsite_path=$(printf $SITES_DIR_FORMAT testsite)
+testsite2_path=$(printf $SITES_DIR_FORMAT testsite2)
+
 $CMD siteadd testsite
 $CMD siteadd testsite2
 $CMD groupadd testgroup
 $CMD useradd testuser password
 
 # can add
-[ "$(len ./sites/.testsite.rules)" == "0" ]
+[ "$(len $testsite_path)" == "0" ]
 $CMD sitemod testsite a gtestgroup > /dev/null
-[ "$(len ./sites/.testsite.rules)" == "1" ]
-grep "@testgroup" "sites/.testsite.rules" > /dev/null
+[ "$(len $testsite_path)" == "1" ]
+grep "@testgroup" "$testsite_path" > /dev/null
 
 # can't add twice
 ! $CMD sitemod testsite a gtestgroup > /dev/null
-[ "$(len ./sites/.testsite.rules)" == "1" ]
+[ "$(len $testsite_path)" == "1" ]
 
 # can delete
 $CMD sitemod testsite d gtestgroup
-! grep testgroup "sites/.testsite.rules"  > /dev/null
+! grep testgroup "$testsite_path"  > /dev/null
 
 # can't re delete
 ! $CMD sitemod testsite d gtestgroup > /dev/null
@@ -36,5 +39,5 @@ $CMD sitemod testsite d gtestgroup
 
 
 $CMD sitemod testsite2 a utestuser
-grep "testuser" "sites/.testsite2.rules" > /dev/null
-! grep "@testuser" "sites/.testsite2.rules" > /dev/null
+grep "testuser" "$testsite2_path" > /dev/null
+! grep "@testuser" "$testsite2_path" > /dev/null
