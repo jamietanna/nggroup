@@ -30,7 +30,6 @@ Note that when removing performing `(user|group)del` you will remove all referen
 ## Known Issues
 
 - No input validation
-- Not completely portable - need to use `#!/usr/bin/env bash`.
 - case statements don't have a default case
 
 ## Future Features (?)
