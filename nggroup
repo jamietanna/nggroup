@@ -184,7 +184,7 @@ generate_sites () {
 	local site_file_path
 
 	site_name=$(echo $rule_file  | sed 's/.*\.\(.*\)\..*/\1/g')
-	site_file_path=$SITES_DIR/$site_name
+	site_file_path=$(printf $SITES_COMPLETE_DIR_FORMAT $site_name)
 	site_file_tmp_path=$site_file_path.tmp
 
 	[ -e $site_file_tmp_path ] && rm $site_file_tmp_path
