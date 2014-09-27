@@ -37,7 +37,7 @@ Note that when removing performing `(user|group)del` you will remove all referen
 The following features are subject to change, but will most probably be added as they'll make my life easier:
 
 - Add global group `@all`
-- tests.sh <testname>
+- `tests.sh <testname>`
 - autocomplete
 - groups can contain groups?
 - circular refs?
