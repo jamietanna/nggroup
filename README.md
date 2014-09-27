@@ -9,6 +9,7 @@ nggroup is a tool hoping to solve this issue by allowing sysadmins to generate t
 ## Known Issues
 
 - No input validation
+- Not completely portable - need to use `#!/usr/bin/env bash`.
 
 ## Future Features (?)
 
