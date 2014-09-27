@@ -1,5 +1,7 @@
 set -e
 
+. ../config
+
 CMD=../nggroup
 
 error_alert () {
