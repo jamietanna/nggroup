@@ -13,25 +13,25 @@ $CMD sitemod testsite a gtestgroup
 $CMD sitemod testsite a utestuser3
 
 # check it removes the actual file
-[ -e users/testuser3 ]
+[ -e $(printf $USER_DIR_FORMAT testuser3) ]
 $CMD userdel testuser3
-[ ! -e users/testuser3 ]
+[ ! -e $(printf $USER_DIR_FORMAT testuser3) ]
 
 # then that it removes the user from the group
-! grep "^testuser3$" groups/testgroup > /dev/null
+! grep "^testuser3$" $(printf $GROUP_DIR_FORMAT testgroup) > /dev/null
 
 # and finally the site
-! grep "^testuser3$" sites/.testsite.rules > /dev/null
+! grep "^testuser3$" $(printf $SITES_DIR_FORMAT testsite) > /dev/null
 
 
 # check it removes the actual file
-[ -e groups/testgroup ]
+[ -e $(printf $GROUP_DIR_FORMAT testgroup) ]
 $CMD groupdel testgroup
-[ ! -e groups/testgroup ]
+[ ! -e $(printf $GROUP_DIR_FORMAT testgroup) ]
 
 # and from the site
-! grep "^@testgroup$" sites/.testsite.rules > /dev/null
+! grep "^@testgroup$" $(printf $SITES_DIR_FORMAT testsite) > /dev/null
 
 # but not the users from the group
-[ -e users/testuser ]
-[ -e users/testuser2 ]
+[ -e $(printf $USER_DIR_FORMAT testuser) ]
+[ -e $(printf $USER_DIR_FORMAT testuser2) ]
