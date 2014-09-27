@@ -2,6 +2,9 @@
 
 . $(dirname $0)/testing_environ
 
+testsite_path=$(printf  $SITES_COMPLETE_DIR_FORMAT testsite)
+testsite2_path=$(printf $SITES_COMPLETE_DIR_FORMAT testsite2)
+
 $CMD useradd  testuser1 pwd
 $CMD useradd  testuser2 pwd
 $CMD useradd  testuser3 pwd
@@ -14,8 +17,8 @@ $CMD sitemod  testsite  a gtestgroup
 $CMD sitemod  testsite2 a utestuser3
 
 $CMD generate
-grep "^# @testgroup$" sites/testsite > /dev/null
-grep "^testuser1" sites/testsite > /dev/null
-grep "^testuser2" sites/testsite > /dev/null
-grep "^# testuser3$" sites/testsite2 > /dev/null
-grep "^testuser3" sites/testsite2 > /dev/null
+grep "^# @testgroup$" $testsite_path > /dev/null
+grep "^testuser1"     $testsite_path > /dev/null
+grep "^testuser2"     $testsite_path > /dev/null
+grep "^# testuser3$"  $testsite2_path > /dev/null
+grep "^testuser3"     $testsite2_path > /dev/null
