@@ -1,6 +1,7 @@
-# nggroup
+# nggroup (nginx htgroup)
 
-nggroup (nginx htgroup) is a method of providing nginx with an emulation of Apache's htgroups feature, which allows easy ACL control for basic HTTP authentication. Nginx supports htpasswd, however, which allows us to create a `__TODO__`
+[Basic HTTP authentication](https://cdn.tutsplus.com/net/uploads/legacy/511_http/401_prompt.png) is a simple popup for a username/password combination that is rendered by the browser, and handled by the web server. This authentication is implemented in both major web servers, [Apache](http://apache.org) and [Nginx](http://nginx.org), via the [`.htaccess`](http://en.wikipedia.org/wiki/.htaccess) and [`.htpasswd`](http://en.wikipedia.org/wiki/.htpasswd) files. In addition to having control over users with access to a site or directory, Apache also has the ability to assign groups for more [fine grained access control](http://qdig.sourceforge.net/Tips/HttpAuthGuide).
+
 
 ## Usage
 
