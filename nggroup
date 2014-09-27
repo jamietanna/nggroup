@@ -1,11 +1,14 @@
 #!/bin/bash
 
+# only provide debugging info if we're not in production mode
+debug() {
+    if [ -n "$_IN_PRODUCTION" ];
+    then
+	echo "$@" >&2;
+    fi
+}
 
-# TODO: need to do *all* validation
-# TODO: case statements have a default case
-
-debug() { echo "$@" 1>&2; }
-
+# if we're not in production, use the current directory
 if [ -n "$_IN_PRODUCTION" ]; 
 then
     HTPASS_DIR=/etc/nginx/htpasswd
@@ -13,6 +16,7 @@ else
     HTPASS_DIR=.
 fi
 
+# our standard config
 SITES_DIR=$HTPASS_DIR/sites
 SITES_DIR_FORMAT="$SITES_DIR/.%s.rules"
 USER_DIR=$HTPASS_DIR/users
@@ -23,18 +27,18 @@ GROUP_DIR_FORMAT="$GROUP_DIR/%s"
 GROUP_RULE_FORMAT="@%s"
 TMP_FILE=/tmp/nggrouptmp
 
+# if we're in production, we need root - have to access $HTPASS_DIR
 if [ -n "$_IN_PRODUCTION" ] && [ "$(id -u)" != "0" ];
 then
     echo "Error; Must run as root."
     exit 1
 fi
 
-
-mkdir -p $HTPASS_DIR
-mkdir -p $SITES_DIR
-mkdir -p $USER_DIR
-mkdir -p $GROUP_DIR
-
+# make sure we've got all our directories available
+for directory in $HTPASS_DIR $SITES_DIR $USER_DIR $GROUP_DIR;
+do
+    mkdir -p $directory
+done
 
 site () {
     local site_file
@@ -127,7 +131,7 @@ group () {
     esac
 }
 
-
+# a shared function for performing (site|group)mod
 mod_funct () {
     if [ ! -e $1 ];
     then
@@ -241,7 +245,7 @@ generate_sites () {
 
 }
 
-
+# our main processing
 case $1 in
     site* )
 	site $@
