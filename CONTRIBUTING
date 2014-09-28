@@ -1,0 +1,11 @@
+# Testing
+
+Please ensure that:
+
+* You do not edit previous tests (unless there is express reason for it)
+* Add a test to validate your work
+* Run all tests before you push a pull request.
+
+# Coding Style
+
+Please ensure that your code conforms with [shellcheck](https://github.com/koalaman/shellcheck).
