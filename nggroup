@@ -65,9 +65,11 @@ user () {
 		exit 1
 	    fi
 
-	    for file_to_remove_from in $(grep -lR "^$2\$" "$GROUP_DIR" "$SITES_DIR");
+	    user_format_regex="^$(printf \"$USER_RULE_FORMAT\" $2)\$"
+
+	    for file_to_remove_from in $(grep -lR "$user_format_regex" "$GROUP_DIR" "$SITES_DIR");
 	    do
-		sed -i "/^$2\$/d" "$file_to_remove_from"
+		sed -i "/$user_format_regex/d" "$file_to_remove_from"
 	    done
 
 	    rm "$file"
@@ -95,9 +97,11 @@ group () {
 		exit 1
 	    fi
 
-	    for file_to_remove_from in $(grep -lR "^@$2\$" "$GROUP_DIR" "$SITES_DIR");
+	    group_format_regex="^$(printf \"$GROUP_RULE_FORMAT\" $2)\$"
+
+	    for file_to_remove_from in $(grep -lR $group_format_regex "$GROUP_DIR" "$SITES_DIR");
 	    do
-		sed -i "/^@$2\$/d" "$file_to_remove_from"
+		sed -i "/$group_format_regex/d" "$file_to_remove_from"
 	    done
 
 	    rm "$group_file"
@@ -195,9 +199,10 @@ generate_sites () {
 
 	    case $(echo "$line" | cut -c 1) in
 		@ )
-		    group_name=$(echo $line | cut -c 2-)
-		    user_list=$(cat $GROUP_DIR/$group_name)
-		    echo "# @$group_name" >> $site_file_tmp_path
+		    group_name=$(echo "$line" | cut -c 2-)
+		    group_file=$(printf "$GROUP_DIR_FORMAT" "$group_name")
+		    user_list=$(cat "$group_file")
+		    echo "# @$group_name" >> "$site_file_tmp_path"
 		    ;;
 		* )
 		    echo "# $line" >> "$site_file_tmp_path"
@@ -207,7 +212,9 @@ generate_sites () {
 
 	    for user in $user_list
 	    do
-		cat $USER_DIR/$user >> $site_file_tmp_path
+		local user_path
+		user_path=$(printf "$USER_DIR_FORMAT" "$user")
+		cat "$user_path" >> "$site_file_tmp_path"
 	    done
 
 	done < "$rule_file"
