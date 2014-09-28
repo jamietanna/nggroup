@@ -2,7 +2,7 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-. $DIR/config
+. "$DIR/config"
 
 # if we're in production, we need root - have to access $HTPASS_DIR
 if [ -n "$_IN_PRODUCTION" ] && [ "$(id -u)" != "0" ];
@@ -14,105 +14,105 @@ fi
 # make sure we've got all our directories available
 for directory in $HTPASS_DIR $SITES_DIR $USER_DIR $GROUP_DIR;
 do
-    mkdir -p $directory
+    mkdir -p "$directory"
 done
 
 site () {
     local site_file
-    site_file=$(printf $SITES_DIR_FORMAT $2)
+    site_file=$(printf "$SITES_DIR_FORMAT" "$2")
     case $1 in
 	siteadd )
-	    if [ -e $site_file ];
+	    if [ -e "$site_file" ];
 	    then
 		echo "Error: Site already exists."
 		exit 1
 	    fi
-	    touch $site_file
+	    touch "$site_file"
 	    ;;
 	sitedel )
-	    if [ ! -e $site_file ];
+	    if [ ! -e "$site_file" ];
 	    then
 		echo "Error: Site does not exist."
 		exit 1
 	    fi
-	    rm $site_file
+	    rm "$site_file"
 	    ;;
 	sitemod )
-	    mod_funct $site_file $3 $4 "Site"
+	    mod_funct "$site_file" "$3" "$4" "Site"
 	    ;;
     esac
 }
 
 user () {
     local file
-    file=$(printf $USER_DIR_FORMAT $2)
+    file=$(printf "$USER_DIR_FORMAT" "$2")
     
     case $1 in
 	useradd )
-	    contents=$(htpasswd -nb $2 $3)
-	    if [ -e $file ];
+	    contents=$(htpasswd -nb "$2" "$3")
+	    if [ -e "$file" ];
 	    then
 		echo "Error: user already exists."
 		exit 1
 	    fi
 
-	    echo $contents > $file
+	    echo "$contents" > "$file"
 	    ;;
 	userdel )
-	    if [ ! -e $file ];
+	    if [ ! -e "$file" ];
 	    then
 		echo "Error: User does not exist."
 		exit 1
 	    fi
 
-	    for file_to_remove_from in $(grep -lR "^$2\$" $GROUP_DIR $SITES_DIR);
+	    for file_to_remove_from in $(grep -lR "^$2\$" "$GROUP_DIR" "$SITES_DIR");
 	    do
-		sed -i "/^$2\$/d" $file_to_remove_from
+		sed -i "/^$2\$/d" "$file_to_remove_from"
 	    done
 
-	    rm $file
+	    rm "$file"
     esac
 }
 
 group () {
     local group_file
-    group_file=$(printf $GROUP_DIR_FORMAT $2)
+    group_file=$(printf "$GROUP_DIR_FORMAT" "$2")
     
     case $1 in
 	groupadd )
-	    if [ -e $group_file ];
+	    if [ -e "$group_file" ];
 	    then
 		echo "Error: group already exists."
 		exit 1
 	    fi
 
-	    touch $group_file
+	    touch "$group_file"
 	    ;;
 	groupdel )
-	    if [ ! -e $group_file ];
+	    if [ ! -e "$group_file" ];
 	    then
 		echo "Error: Group does not exist."
 		exit 1
 	    fi
 
-	    for file_to_remove_from in $(grep -lR "^@$2\$" $GROUP_DIR $SITES_DIR);
+	    for file_to_remove_from in $(grep -lR "^@$2\$" "$GROUP_DIR" "$SITES_DIR");
 	    do
-		sed -i "/^@$2\$/d" $file_to_remove_from
+		sed -i "/^@$2\$/d" "$file_to_remove_from"
 	    done
 
-	    rm $group_file
+	    rm "$group_file"
 	    ;;
 	groupmod )
-	    mod_funct $group_file $3 $4 "Group"
+	    mod_funct "$group_file" "$3" "$4" "Group"
 	    ;;
     esac
 }
 
 # a shared function for performing (site|group)mod
 mod_funct () {
-    if [ ! -e $1 ];
+    if [ ! -e "$1" ];
     then
-	printf "Error: %s does not exist\n" $4
+	printf "Error: %s does not exist\n" "$4"
 	exit 1
     fi
 
@@ -123,7 +123,7 @@ mod_funct () {
     local context_friendly
     local context_in_file_search
 
-    context=$(echo $3 | cut -c 2-)
+    context=$(echo "$3" | cut -c 2-)
 
     case $3 in
 	u* )
@@ -140,17 +140,17 @@ mod_funct () {
 	    ;;
     esac
 
-    context_file=$(printf $context_dir_format $context)
-    context_insert=$(printf $context_rule_format $context)
+    context_file=$(printf "$context_dir_format" "$context")
+    context_insert=$(printf "$context_rule_format" "$context")
 
-    if [ ! -e $context_file ];
+    if [ ! -e "$context_file" ];
     then
-	printf "Error: %s does not exist.\n" $context_friendly
+	printf "Error: %s does not exist.\n" "$context_friendly"
 	exit 1
     fi
 
     # TODO: make sure all greps are strict!
-    grep "^$context_in_file_search$" $1 > /dev/null
+    grep "^$context_in_file_search$" "$1" > /dev/null
     context_in_file=$?
 
     case $2 in
@@ -160,13 +160,13 @@ mod_funct () {
 		printf "Error: %s is already part of the group.\n" $context_friendly
 		exit 1
 	    else
-		echo $context_insert >> $1
+		echo "$context_insert" >> "$1"
 	    fi
 	    ;;
 	d )
-	    if [ 0 -eq $context_in_file ];
+	    if [ 0 -eq "$context_in_file" ];
 	    then
-		sed -i /^$context_insert$/d $1
+		sed -i "/^$context_insert$/d" "$1"
 	    else
 		printf "Error: %s does not exist in the group.\n" $context_friendly
 		exit 1
@@ -183,24 +183,24 @@ generate_sites () {
 	local site_name
 	local site_file_path
 
-	site_name=$(echo $rule_file  | sed 's/.*\.\(.*\)\..*/\1/g')
-	site_file_path=$(printf $SITES_COMPLETE_DIR_FORMAT $site_name)
+	site_name=$(echo "$rule_file"  | sed 's/.*\.\(.*\)\..*/\1/g')
+	site_file_path=$(printf "$SITES_COMPLETE_DIR_FORMAT" "$site_name")
 	site_file_tmp_path=$site_file_path.tmp
 
-	[ -e $site_file_tmp_path ] && rm $site_file_tmp_path
+	[ -e "$site_file_tmp_path" ] && rm "$site_file_tmp_path"
 
 	while read -r line
 	do
 	    local user_list
 
-	    case $(echo $line | cut -c 1) in
+	    case $(echo "$line" | cut -c 1) in
 		@ )
 		    group_name=$(echo $line | cut -c 2-)
 		    user_list=$(cat $GROUP_DIR/$group_name)
 		    echo "# @$group_name" >> $site_file_tmp_path
 		    ;;
 		* )
-		    echo "# $line" >> $site_file_tmp_path
+		    echo "# $line" >> "$site_file_tmp_path"
 		    user_list=$line
 		    ;;
 	    esac
@@ -210,13 +210,13 @@ generate_sites () {
 		cat $USER_DIR/$user >> $site_file_tmp_path
 	    done
 
-	done < $rule_file
+	done < "$rule_file"
 
 	# if we don't have a previous version, or if they're different,
 	#  we prioritise the newly generated file
-	if [ ! -e $site_file_path ] || ! diff $site_file_path $site_file_tmp_path > /dev/null;
+	if [ ! -e "$site_file_path" ] || ! diff "$site_file_path" "$site_file_tmp_path" > /dev/null;
 	then
-	    mv $site_file_tmp_path $site_file_path
+	    mv "$site_file_tmp_path" "$site_file_path"
 	fi
     done
 
@@ -225,15 +225,15 @@ generate_sites () {
 # our main processing
 case $1 in
     site* )
-	site $@
+	site "$@"
 	;;
 
     user* )
-	user $@
+	user "$@"
 	;;
 
     group* )
-	group $@
+	group "$@"
 	;;
     generate )
 	generate_sites
