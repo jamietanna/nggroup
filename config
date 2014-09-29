@@ -1,3 +1,27 @@
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+. "$DIR/personal_config"
+
+personal_config_errors=false
+
+if [ -z "$NGGROUP_SERVER_NAME" ];
+then
+    echo 'Error: Constant $NGGROUP_SERVER_NAME not set in \`personal_config\`'
+    personal_config_errors=true
+fi
+
+if [ -z "$NGGROUP_SERVER_ADMIN_EMAIL" ];
+then
+    echo 'Error: Constant $NGGROUP_SERVER_ADMIN_EMAIL not set in \`personal_config\`'
+    personal_config_errors=true
+fi
+
+if $personal_config_errors;
+then
+    exit 1
+fi
+
+
 # only provide debugging info if we're not in production mode
 debug() {
     if [ -n "$_IN_PRODUCTION" ];
