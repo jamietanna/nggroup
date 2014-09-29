@@ -2,9 +2,9 @@
 
 . $(dirname $0)/testing_environ
 
-$CMD useradd testuser pwd
-$CMD useradd testuser2 pwd
-$CMD useradd testuser3 pwd
+$CMD useradd testuser pwd test@localhost
+$CMD useradd testuser2 pwd test2@localhost
+$CMD useradd testuser3 pwd test3@localhost
 $CMD groupadd testgroup
 $CMD groupmod testgroup a utestuser
 $CMD groupmod testgroup a utestuser2
