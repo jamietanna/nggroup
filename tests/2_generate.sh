@@ -16,6 +16,7 @@ $CMD siteadd  testsite2
 $CMD sitemod  testsite  a gtestgroup
 $CMD sitemod  testsite2 a utestuser3
 
+# TODO: these should be stricter
 $CMD generate
 grep "^# @testgroup$" $testsite_path > /dev/null
 grep "^testuser1"     $testsite_path > /dev/null

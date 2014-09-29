@@ -57,9 +57,9 @@ user () {
 		exit 1
 	    fi
 
-	    contents=$(htpasswd -nb "$2" "$3")
+	    # contents=$(htpasswd -nb "$2" "$3")
 
-	    echo "$contents" > "$rules_file"
+	    echo "$2$USER_DIR_FORMAT_DELIM$3$USER_DIR_FORMAT_DELIM$4" > "$rules_file"
 	    ;;
 
 	# TODO: make a global?
@@ -191,6 +191,15 @@ mod_funct () {
 }
 
 generate_sites () {
+    # TODO as separate function - `generate users`, `generate sites` etc
+    for user_rule_file in $USER_DIR/.*.rules;
+    do
+	username=$(cat $user_rule_file | cut -f1 -d$USER_DIR_FORMAT_DELIM)
+	user_out_file=$(printf "$USER_COMPLETE_DIR_FORMAT" "$username")
+	user_password=$(cat $user_rule_file | cut -f2 -d$USER_DIR_FORMAT_DELIM)
+	echo $(htpasswd -nb "$username" "$user_password" ) > $user_out_file
+    done
+
     for rule_file in $SITES_DIR/.*.rules;
     do
 	local site_file_insert
@@ -223,7 +232,7 @@ generate_sites () {
 	    for user in $user_list
 	    do
 		local user_path
-		user_path=$(printf "$USER_DIR_FORMAT" "$user")
+		user_path=$(printf "$USER_COMPLETE_DIR_FORMAT" "$user")
 		cat "$user_path" >> "$site_file_tmp_path"
 	    done
 
