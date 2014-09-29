@@ -8,7 +8,7 @@ testsite2_path=$(printf $SITES_DIR_FORMAT testsite2)
 $CMD siteadd testsite
 $CMD siteadd testsite2
 $CMD groupadd testgroup
-$CMD useradd testuser password test@localhost
+$CMD useradd testuser password test@localhost "Test User"
 
 # can add
 [ "$(len $testsite_path)" == "0" ]
