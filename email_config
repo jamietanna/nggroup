@@ -1,0 +1,46 @@
+NEW_USER_EMAIL_SUBJECT="Login details for $NGGROUP_SERVER_NAME"
+NEW_USER_EMAIL_TEMPLATE="
+Hi ${NGGROUP_EMAIL_NAME},
+
+Please find attached your login details for ${NGGROUP_SERVER_NAME}.
+
+Details are as follows:
+
+Username: ${NGGROUP_EMAIL_USERNAME}
+Password: ${NGGROUP_EMAIL_PASSWORD}
+Sites available:
+[links]
+${NGGROUP_EMAIL_LINKS}
+[/links]
+
+Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL} instead.
+"
+
+email () {
+    NGGROUP_EMAIL_ADDRESS="$2"
+    case $1 in
+	new_user )
+	    NGGROUP_EMAIL_NAME="$3"
+	    NGGROUP_EMAIL_USERNAME="$4"
+	    NGGROUP_EMAIL_PASSWORD="$5"
+	    NGGROUP_EMAIL_LINKS="$6"
+	    NEW_USER_EMAIL_TEMPLATE="
+Hi ${NGGROUP_EMAIL_NAME},
+
+Please find attached your login details for ${NGGROUP_SERVER_NAME}.
+
+Details are as follows:
+
+Username: ${NGGROUP_EMAIL_USERNAME}
+Password: ${NGGROUP_EMAIL_PASSWORD}
+Sites available:
+[links]
+${NGGROUP_EMAIL_LINKS}
+[/links]
+
+Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL} instead.
+"
+	    echo $NEW_USER_EMAIL_TEMPLATE
+	    ;;
+    esac
+}

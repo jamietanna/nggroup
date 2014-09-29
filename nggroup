@@ -58,7 +58,7 @@ user () {
 	    fi
 
 	    # contents=$(htpasswd -nb "$2" "$3")
-
+	    # username, password, email, name
 	    echo "$2$USER_DIR_FORMAT_DELIM$3$USER_DIR_FORMAT_DELIM$4$USER_DIR_FORMAT_DELIM$5" > "$rules_file"
 	    ;;
 
@@ -201,16 +201,30 @@ generate () {
 	* )
 	    generate "users"
 	    generate "sites"
+	    ;;
     esac
 }
 
 generate_users () {
     for user_rule_file in $USER_DIR/.*.rules;
     do
+
+	if [ ! -e "$user_out_file" ];
+	then
+	    send_email=$EMAIL_NEW_USERS
+	fi
 	username=$(cat $user_rule_file | cut -f1 -d$USER_DIR_FORMAT_DELIM)
 	user_out_file=$(printf "$USER_COMPLETE_DIR_FORMAT" "$username")
 	user_password=$(cat $user_rule_file | cut -f2 -d$USER_DIR_FORMAT_DELIM)
+	user_email=$(cat $user_rule_file | cut -f3 -d$USER_DIR_FORMAT_DELIM)
+	user_name=$(cat $user_rule_file | cut -f4 -d$USER_DIR_FORMAT_DELIM)
 	echo $(htpasswd -nb "$username" "$user_password" ) > $user_out_file
+
+	if $send_email;
+	then
+	    echo "email new_user \"$user_email\" \"$user_name\" \"$username\" \"$user_password\" \"LIST_OF_SITES\""
+	    email new_user "$user_email" "$user_name" "$username" "$user_password" "LIST_OF_SITES"
+	fi
     done
 }
 
