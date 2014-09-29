@@ -5,9 +5,9 @@
 testsite_path=$(printf  $SITES_COMPLETE_DIR_FORMAT testsite)
 testsite2_path=$(printf $SITES_COMPLETE_DIR_FORMAT testsite2)
 
-$CMD useradd  testuser1 pwd
-$CMD useradd  testuser2 pwd
-$CMD useradd  testuser3 pwd
+$CMD useradd  testuser1 pwd test1@localhost
+$CMD useradd  testuser2 pwd test2@localhost
+$CMD useradd  testuser3 pwd test3@localhost
 $CMD groupadd testgroup
 $CMD groupmod testgroup a utestuser1
 $CMD groupmod testgroup a utestuser2
