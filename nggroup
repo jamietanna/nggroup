@@ -291,6 +291,6 @@ case $1 in
 	group "$@"
 	;;
     generate )
-	generate "$@"
+	generate "$2"
 	;;
 esac
