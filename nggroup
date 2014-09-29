@@ -190,8 +190,21 @@ mod_funct () {
 
 }
 
-generate_sites () {
-    # TODO as separate function - `generate users`, `generate sites` etc
+generate () {
+    case "$1" in
+	users )
+	    generate_users
+	    ;;
+	sites )
+	    generate_sites
+	    ;;
+	* )
+	    generate "users"
+	    generate "sites"
+    esac
+}
+
+generate_users () {
     for user_rule_file in $USER_DIR/.*.rules;
     do
 	username=$(cat $user_rule_file | cut -f1 -d$USER_DIR_FORMAT_DELIM)
@@ -199,7 +212,9 @@ generate_sites () {
 	user_password=$(cat $user_rule_file | cut -f2 -d$USER_DIR_FORMAT_DELIM)
 	echo $(htpasswd -nb "$username" "$user_password" ) > $user_out_file
     done
+}
 
+generate_sites () {
     for rule_file in $SITES_DIR/.*.rules;
     do
 	local site_file_insert
@@ -262,7 +277,6 @@ case $1 in
 	group "$@"
 	;;
     generate )
-	generate_sites
+	generate "$@"
 	;;
 esac
-
