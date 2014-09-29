@@ -44,22 +44,27 @@ site () {
 }
 
 user () {
-    local file
-    file=$(printf "$USER_DIR_FORMAT" "$2")
-    
+    local rules_file
+    local generated_file
+    rules_file=$(printf "$USER_DIR_FORMAT" "$2")
+    generated_file=$(printf "$USER_COMPLETE_DIR_FORMAT" "$2")
+
     case $1 in
 	useradd )
-	    contents=$(htpasswd -nb "$2" "$3")
-	    if [ -e "$file" ];
+	    if [ -e "$rules_file" ];
 	    then
 		echo "Error: user already exists."
 		exit 1
 	    fi
 
-	    echo "$contents" > "$file"
+	    contents=$(htpasswd -nb "$2" "$3")
+
+	    echo "$contents" > "$rules_file"
 	    ;;
+
+	# TODO: make a global?
 	userdel )
-	    if [ ! -e "$file" ];
+	    if [ ! -e "$rules_file" ];
 	    then
 		echo "Error: User does not exist."
 		exit 1
@@ -72,7 +77,12 @@ user () {
 		sed -i "/$user_format_regex/d" "$file_to_remove_from"
 	    done
 
-	    rm "$file"
+	    if [ -e "$generated_file" ];
+	    then
+		rm "$generated_file"
+	    fi
+
+	    rm "$rules_file" 
     esac
 }
 
