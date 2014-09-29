@@ -19,6 +19,13 @@ Please note that this is an automated message and as such, any replies are not a
 "
 
 email () {
+    if [ ! $(which mail) ];
+    then
+	echo "Error: cannot email - no \`mail\` installed"
+	return 1
+    fi
+
+
     NGGROUP_EMAIL_ADDRESS="$2"
     case $1 in
 	new_user )
