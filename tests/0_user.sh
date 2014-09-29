@@ -14,5 +14,6 @@ $CMD useradd testuser password
 $CMD useradd testuser2 password2
 $CMD userdel testuser2
 
+
 # cleanup
 $CMD userdel testuser
