@@ -59,7 +59,7 @@ user () {
 
 	    # contents=$(htpasswd -nb "$2" "$3")
 
-	    echo "$2$USER_DIR_FORMAT_DELIM$3$USER_DIR_FORMAT_DELIM$4" > "$rules_file"
+	    echo "$2$USER_DIR_FORMAT_DELIM$3$USER_DIR_FORMAT_DELIM$4$USER_DIR_FORMAT_DELIM$5" > "$rules_file"
 	    ;;
 
 	# TODO: make a global?
