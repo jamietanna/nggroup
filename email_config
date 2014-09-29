@@ -49,7 +49,7 @@ ${NGGROUP_EMAIL_LINKS}
 
 Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL} instead.
 "
-	    echo $NEW_USER_EMAIL_TEMPLATE
+	    echo $NEW_USER_EMAIL_TEMPLATE | mail -s $NEW_USER_EMAIL_SUBJECT $NGGROUP_EMAIL_ADDRESS -c $NGGROUP_SERVER_ADMIN_EMAIL
 	    ;;
     esac
 }
