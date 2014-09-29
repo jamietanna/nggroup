@@ -1,3 +1,5 @@
+# -*- mode: sh -*-
+
 NEW_USER_EMAIL_SUBJECT="Login details for $NGGROUP_SERVER_NAME"
 NEW_USER_EMAIL_TEMPLATE="
 Hi ${NGGROUP_EMAIL_NAME},
