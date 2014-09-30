@@ -1,5 +1,7 @@
 # -*- mode: sh -*-
 
+MAIL_CMD=mutt
+
 NEW_USER_EMAIL_SUBJECT="Login details for $NGGROUP_SERVER_NAME"
 NEW_USER_EMAIL_TEMPLATE="
 Hi ${NGGROUP_EMAIL_NAME},
@@ -18,8 +20,16 @@ ${NGGROUP_EMAIL_LINKS}
 Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL} instead.
 "
 
+as_li () {
+    echo "<li>" "$1" "</li>"
+}
+
+as_link () {
+    echo "<a href='$NGGROUP_SERVER_ROOT_URL/$1'>$1 on $NGGROUP_SERVER_NAME</a>"
+}
+
 email () {
-    if [ ! $(which mail) ];
+    if [ ! $(which "$MAIL_CMD") ];
     then
 	echo "Error: cannot email - no \`mail\` installed"
 	return 1
@@ -32,24 +42,34 @@ email () {
 	    NGGROUP_EMAIL_NAME="$3"
 	    NGGROUP_EMAIL_USERNAME="$4"
 	    NGGROUP_EMAIL_PASSWORD="$5"
-	    NGGROUP_EMAIL_LINKS="$6"
+	    NGGROUP_EMAIL_LINKS=()
+	    NGGROUP_EMAIL_LINKS_COUNT=0
+	    for link in $6;
+	    do
+		NGGROUP_EMAIL_LINKS[$NGGROUP_EMAIL_LINKS_COUNT]=$(as_li "$(as_link $link)")
+		NGGROUP_EMAIL_LINKS_COUNT=$(( $NGGROUP_EMAIL_LINKS_COUNT + 1 ))
+	    done
+
 	    NEW_USER_EMAIL_TEMPLATE="
-Hi ${NGGROUP_EMAIL_NAME},
+<p>Hi ${NGGROUP_EMAIL_NAME},</p>
 
-Please find attached your login details for ${NGGROUP_SERVER_NAME}.
+<p>Please find attached your login details for <em>${NGGROUP_SERVER_NAME}</em>.</p>
 
-Details are as follows:
+<p>Details are as follows:</p>
+<ul>
+    <li>Username: <code>${NGGROUP_EMAIL_USERNAME}</code></li>
+    <li>Password: <code>${NGGROUP_EMAIL_PASSWORD}</code></li>
+</ul>
 
-Username: ${NGGROUP_EMAIL_USERNAME}
-Password: ${NGGROUP_EMAIL_PASSWORD}
-Sites available:
-[links]
-${NGGROUP_EMAIL_LINKS}
-[/links]
+<p>Sites available:</p>
+<ul>
+${NGGROUP_EMAIL_LINKS[@]}
+</ul>
+</p>
 
-Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL} instead.
+<p>Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL} instead.</p>
 "
-	    echo $NEW_USER_EMAIL_TEMPLATE | mail -s $NEW_USER_EMAIL_SUBJECT $NGGROUP_EMAIL_ADDRESS -c $NGGROUP_SERVER_ADMIN_EMAIL
+	    echo "$NEW_USER_EMAIL_TEMPLATE" | "$MAIL_CMD" -e "set content_type=text/html" -c "$NGGROUP_SERVER_ADMIN_EMAIL" -s "$NEW_USER_EMAIL_SUBJECT" "$NGGROUP_EMAIL_ADDRESS"
 	    ;;
     esac
 }
