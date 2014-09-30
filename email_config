@@ -42,11 +42,11 @@ email () {
 	    NGGROUP_EMAIL_NAME="$3"
 	    NGGROUP_EMAIL_USERNAME="$4"
 	    NGGROUP_EMAIL_PASSWORD="$5"
-	    NGGROUP_EMAIL_LINKS=""
+	    NGGROUP_EMAIL_LINKS=()
+	    NGGROUP_EMAIL_LINKS_COUNT=0
 	    for link in $6;
 	    do
-		tmp=$(as_li "$(as_link $link)")
-		NGGROUP_EMAIL_LINKS+="$tmp"
+		NGGROUP_EMAIL_LINKS[$NGGROUP_EMAIL_LINKS_COUNT]=$(as_li "$(as_link $link)")
 		NGGROUP_EMAIL_LINKS_COUNT=$(( $NGGROUP_EMAIL_LINKS_COUNT + 1 ))
 	    done
 
@@ -68,7 +68,6 @@ ${NGGROUP_EMAIL_LINKS}
 </p>
 
 <p>Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL} instead.</p>
-
 EOF
 	    ;;
     esac
