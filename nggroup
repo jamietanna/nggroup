@@ -222,7 +222,6 @@ generate_users () {
 
 	if $send_email;
 	then
-	    echo "email new_user \"$user_email\" \"$user_name\" \"$username\" \"$user_password\" \"LIST_OF_SITES\""
 	    email new_user "$user_email" "$user_name" "$username" "$user_password" "LIST_OF_SITES"
 	fi
     done
