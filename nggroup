@@ -277,6 +277,14 @@ generate_sites () {
 
 }
 
+emails () {
+    for user_file in users/.*.rules;
+    do
+	echo -n "$(cut -d, -f3 $user_file) "
+    done
+    echo ""
+}
+
 # our main processing
 case $1 in
     site* )
@@ -290,7 +298,12 @@ case $1 in
     group* )
 	group "$@"
 	;;
+
     generate )
 	generate "$2"
+	;;
+
+    emails )
+	emails
 	;;
 esac
