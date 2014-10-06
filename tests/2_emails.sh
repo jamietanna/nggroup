@@ -13,7 +13,7 @@ $CMD groupmod testgroup a utestuser3
 $CMD siteadd testsite
 $CMD sitemod testsite a utestuser2
 $CMD sitemod testsite a utestuser3
-
+$CMD generate
 
 echo "$($CMD emails)" > "$output_file"
 grep -o "test1@localhost" "$output_file"

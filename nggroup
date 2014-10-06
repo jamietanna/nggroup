@@ -276,16 +276,20 @@ generate_sites () {
 
 }
 
+get_email_from_user () {
+    user_file=$(printf "$USER_DIR_FORMAT" "$1")
+    echo "$(cut -d, -f3 $user_file) "
+}
+
 emails () {
     case "$2" in
 	g* )
 	    group=$(echo "$2" | cut -c 2-)
 	    group_file=$(printf "$GROUP_DIR_FORMAT" "$group")
 
-	    for user in $(cat $group_file);
+	    for username in $(cat $group_file);
 	    do
-		user_file=$(printf "$USER_DIR_FORMAT" "$user")
-		echo "$(cut -d, -f3 $user_file) "
+		echo "$(get_email_from_user $username) "
 	    done
 	    ;;
 
@@ -294,16 +298,16 @@ emails () {
 	    site_file=$(printf "$SITES_DIR_FORMAT" "$site")
 	    for user_login in $(grep -v "^#" $site_file);
 	    do
-		user=$(echo $user_login | cut -f1 -d:)
-		user_file=$(printf "$USER_DIR_FORMAT" "$user")
-		echo "$(cut -d, -f3 $user_file) "
+		username=$(echo $user_login | cut -f1 -d:)
+		echo "$(get_email_from_user $username) "
 	    done
 	    ;;
 
 	* )
-	    for user_file in users/.*.rules;
+	    for user_path in users/*;
 	    do
-		echo "$(cut -d, -f3 $user_file) "
+		username=$(echo $user_path | cut -f2 -d\/)
+		echo "$(get_email_from_user $username)"
 	    done
 	    echo ""
 	    ;;
