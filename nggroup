@@ -303,7 +303,7 @@ emails () {
 	    done
 	    ;;
 
-	* )
+	all | * )
 	    for user_path in users/*;
 	    do
 		username=$(echo $user_path | cut -f2 -d\/)
@@ -328,7 +328,7 @@ case $1 in
 	group "$@"
 	;;
 
-    generate )
+    generate* )
 	generate "$2"
 	;;
 
