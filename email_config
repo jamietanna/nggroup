@@ -12,6 +12,10 @@ as_link () {
     echo "<a href='$NGGROUP_SERVER_ROOT_URL/$1'>$1 on $NGGROUP_SERVER_NAME</a>"
 }
 
+as_mail_link () {
+    echo "<a href='mailto:$1'>$1</a>"
+}
+
 send_email () {
 # send_email $email $subject $message $cc
     if $SEND_EMAILS ;
@@ -43,6 +47,7 @@ email () {
 	    NGGROUP_EMAIL_PASSWORD="$5"
 	    NGGROUP_EMAIL_LINKS=()
 	    NGGROUP_EMAIL_LINKS_COUNT=0
+	    NGGROUP_SERVER_ADMIN_EMAIL_LINK=$(as_mail_link $NGGROUP_SERVER_ADMIN_EMAIL)
 	    for link in $6;
 	    do
 		NGGROUP_EMAIL_LINKS[$NGGROUP_EMAIL_LINKS_COUNT]=$(as_li "$(as_link $link)")
@@ -66,7 +71,7 @@ ${NGGROUP_EMAIL_LINKS}
 </ul>
 </p>
 
-<p>Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL} instead.</p>
+<p>Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL_LINK} instead.</p>
 " "$NGGROUP_SERVER_ADMIN_EMAIL"
 	    ;;
     esac
