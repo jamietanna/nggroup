@@ -15,17 +15,17 @@ $CMD sitemod testsite a utestuser2
 $CMD sitemod testsite a utestuser3
 $CMD generate
 
-echo "$($CMD emails)" > "$output_file"
+echo "$($CMD email list)" > "$output_file"
 grep -o "test1@localhost" "$output_file"
 grep -o "test2@localhost" "$output_file"
 grep -o "test3@localhost" "$output_file"
 
-echo "$($CMD emails gtestgroup)" > "$output_file"
+echo "$($CMD email list gtestgroup)" > "$output_file"
 grep -o "test1@localhost" "$output_file"
 ! grep -o "test2@localhost" "$output_file"
 grep -o "test3@localhost" "$output_file"
 
-echo "$($CMD emails stestsite)" > "$output_file"
+echo "$($CMD email list stestsite)" > "$output_file"
 ! grep -o "test1@localhost" "$output_file"
 grep -o "test2@localhost" "$output_file"
 grep -o "test3@localhost" "$output_file"
