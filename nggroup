@@ -283,35 +283,47 @@ get_email_from_user () {
 
 emails () {
     case "$2" in
-	g* )
-	    group=$(echo "$2" | cut -c 2-)
-	    group_file=$(printf "$GROUP_DIR_FORMAT" "$group")
+	list*)
+	    case "$3" in
+		g* )
+		    group=$(echo "$3" | cut -c 2-)
+		    group_file=$(printf "$GROUP_DIR_FORMAT" "$group")
 
-	    for username in $(cat $group_file);
-	    do
-		echo "$(get_email_from_user $username) "
-	    done
+		    for username in $(cat $group_file);
+		    do
+			echo -n "$(get_email_from_user $username)"
+		    done
+		    ;;
+
+		s* )
+		    site=$(echo "$3" | cut -c 2-)
+		    site_file=$(printf "$SITES_DIR_FORMAT" "$site")
+		    for user_login in $(grep -v "^#" $site_file);
+		    do
+			username=$(echo $user_login | cut -f1 -d:)
+			echo -n "$(get_email_from_user $username)"
+		    done
+		    ;;
+
+		all | * )
+		    for user_path in users/*;
+		    do
+			username=$(echo $user_path | cut -f2 -d\/)
+			echo -n "$(get_email_from_user $username)"
+		    done
+		    echo ""
+		    ;;
+	    esac
 	    ;;
-
-	s* )
-	    site=$(echo "$2" | cut -c 2-)
-	    site_file=$(printf "$SITES_DIR_FORMAT" "$site")
-	    for user_login in $(grep -v "^#" $site_file);
-	    do
-		username=$(echo $user_login | cut -f1 -d:)
-		echo "$(get_email_from_user $username) "
-	    done
-	    ;;
-
-	all | * )
-	    for user_path in users/*;
-	    do
-		username=$(echo $user_path | cut -f2 -d\/)
-		echo "$(get_email_from_user $username)"
-	    done
-	    echo ""
+	send*)
+	    case "$3" in
+		downtime )
+		    email downtime "$4" "$5"
+		    ;;
+	    esac
 	    ;;
     esac
+
 }
 
 # our main processing
@@ -332,7 +344,7 @@ case $1 in
 	generate "$2"
 	;;
 
-    emails* )
+    email* )
 	emails "$@"
 	;;
 esac

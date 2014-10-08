@@ -2,7 +2,7 @@
 
 MAIL_CMD=mutt
 
-NEW_USER_EMAIL_SUBJECT="Login details for $NGGROUP_SERVER_NAME"
+NEW_USER_EMAIL_SUBJECT="Login details for ${NGGROUP_EMAIL_NAME}"
 
 as_li () {
     echo "<li>" "$1" "</li>"
@@ -17,17 +17,30 @@ as_mail_link () {
 }
 
 send_email () {
-# send_email $email $subject $message $cc
+# send_email $email $subject $message $cc $headers $bcc
+    to_field="$1"
+    subject_field="$2"
+    cc_field="$4"
+    body_content="$3
+<p><strong style='font-size: 85%'>Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL_LINK} instead.</strong></p>
+"
+    header_content="set content_type=text/html; $5"
+    bcc_field="$6"
+
     if $SEND_EMAILS ;
     then
-	"$MAIL_CMD" -e "set content_type=text/html" -s "$2" -c "$3" "$1" "$4"
+	"$MAIL_CMD" -e "$header_content" -s "$subject_field" -c "$cc_field" -b "$bcc_field" "$to_field" "$body_content"
     else
 	echo "
-To: $2
-Cc: $4
-Subject: $2
-$3
-"
+To: $to_field
+Cc: $cc_field
+Bcc: $bcc_field
+Subject: $subject_field
+Headers: $header_content
+------------------------
+$body_content
+
+************************"
     fi
 }
 
@@ -54,8 +67,8 @@ email () {
 		NGGROUP_EMAIL_LINKS_COUNT=$(( $NGGROUP_EMAIL_LINKS_COUNT + 1 ))
 	    done
 
-	    send_email "$NGGROUP_EMAIL_ADDRESS" "$NEW_USER_EMAIL_SUBJECT" "
-<p>Hi ${NGGROUP_EMAIL_NAME},</p>
+	    send_email "$NGGROUP_EMAIL_ADDRESS" "[${NGGROUP_SERVER_NAME}] $NEW_USER_EMAIL_SUBJECT" \
+"<p>Hi ${NGGROUP_EMAIL_NAME},</p>
 
 <p>Please find attached your login details for <em>${NGGROUP_SERVER_NAME}</em>.</p>
 
@@ -70,9 +83,21 @@ email () {
 ${NGGROUP_EMAIL_LINKS}
 </ul>
 </p>
-
-<p><strong style='font-size: 85%'>Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL_LINK} instead.</strong></p>
 " "$NGGROUP_SERVER_ADMIN_EMAIL"
 	    ;;
+	downtime )
+	    # TODO: make it so we remove the first argument
+	    emails_list=$(emails '' list all)
+	    all_emails="${emails_list// /;}"
+
+	    downtime_start=$2
+	    downtime_end=$3
+	    send_email "" "Server downtime" \
+"<p>Dear all,</p>
+
+<p>Please note that <em>${NGGROUP_SERVER_NAME}</em> is going to be down for maintenance between <strong>${downtime_start}</strong> and <strong>${downtime_end}</strong>. Further emails may follow with updates. </p>
+" "$NGGROUP_SERVER_ADMIN_EMAIL" "set priority=high" "$all_emails"
+	    ;;
     esac
+
 }
