@@ -12,10 +12,25 @@ as_link () {
     echo "<a href='$NGGROUP_SERVER_ROOT_URL/$1'>$1 on $NGGROUP_SERVER_NAME</a>"
 }
 
-email () {
-    if [ ! $(which "$MAIL_CMD") ];
+send_email () {
+# send_email $email $subject $message $cc
+    if $SEND_EMAILS ;
     then
-	echo "Error: cannot email - no \`mail\` installed"
+	"$MAIL_CMD" -e "set content_type=text/html" -s "$2" -c "$3" "$1" "$4"
+    else
+	echo "
+To: $2
+Cc: $4
+Subject: $2
+$3
+"
+    fi
+}
+
+email () {
+    if [ $($SEND_EMAILS) ] && [ ! $(which "$MAIL_CMD") ];
+    then
+	echo "Error: cannot email - no \`$MAIL_CMD\` installed"
 	return 1
     fi
 
@@ -34,7 +49,7 @@ email () {
 		NGGROUP_EMAIL_LINKS_COUNT=$(( $NGGROUP_EMAIL_LINKS_COUNT + 1 ))
 	    done
 
-	    "$MAIL_CMD" -e "set content_type=text/html" -c "$NGGROUP_SERVER_ADMIN_EMAIL" -s "$NEW_USER_EMAIL_SUBJECT" "$NGGROUP_EMAIL_ADDRESS" <<EOF
+	    send_email "$NGGROUP_EMAIL_ADDRESS" "$NEW_USER_EMAIL_SUBJECT" "
 <p>Hi ${NGGROUP_EMAIL_NAME},</p>
 
 <p>Please find attached your login details for <em>${NGGROUP_SERVER_NAME}</em>.</p>
@@ -52,7 +67,7 @@ ${NGGROUP_EMAIL_LINKS}
 </p>
 
 <p>Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL} instead.</p>
-EOF
+" "$NGGROUP_SERVER_ADMIN_EMAIL"
 	    ;;
     esac
 }

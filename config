@@ -66,4 +66,11 @@ GROUP_DIR_FORMAT="$GROUP_DIR/%s"
 GROUP_RULE_FORMAT="@%s"
 TMP_FILE=/tmp/nggrouptmp
 
-EMAIL_NEW_USERS=true
+SEND_EMAILS=false
+
+if [  $SEND_EMAILS ];
+then
+    EMAIL_NEW_USERS=true
+else
+    EMAIL_NEW_USERS=$SEND_EMAILS
+fi
