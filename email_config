@@ -71,7 +71,7 @@ ${NGGROUP_EMAIL_LINKS}
 </ul>
 </p>
 
-<p>Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL_LINK} instead.</p>
+<p><strong style='font-size: 85%'>Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL_LINK} instead.</strong></p>
 " "$NGGROUP_SERVER_ADMIN_EMAIL"
 	    ;;
     esac
