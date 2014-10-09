@@ -318,7 +318,7 @@ emails () {
 	send*)
 	    case "$3" in
 		downtime )
-		    email downtime "$4" "$5"
+		    email downtime "$4" "$5" "$6"
 		    ;;
 	    esac
 	    ;;

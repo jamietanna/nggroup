@@ -1,7 +1,6 @@
 # -*- mode: sh -*-
 
 MAIL_CMD=mutt
-
 NEW_USER_EMAIL_SUBJECT="Login details for ${NGGROUP_EMAIL_NAME}"
 
 as_li () {
@@ -17,7 +16,7 @@ as_mail_link () {
 }
 
 send_email () {
-# send_email $email $subject $message $cc $headers $bcc
+    # send_email $email $subject $message $cc $headers $bcc
     to_field="$1"
     subject_field="$2"
     cc_field="$4"
@@ -68,7 +67,7 @@ email () {
 	    done
 
 	    send_email "$NGGROUP_EMAIL_ADDRESS" "[${NGGROUP_SERVER_NAME}] $NEW_USER_EMAIL_SUBJECT" \
-"<p>Hi ${NGGROUP_EMAIL_NAME},</p>
+		"<p>Hi ${NGGROUP_EMAIL_NAME},</p>
 
 <p>Please find attached your login details for <em>${NGGROUP_SERVER_NAME}</em>.</p>
 
@@ -85,18 +84,32 @@ ${NGGROUP_EMAIL_LINKS}
 </p>
 " "$NGGROUP_SERVER_ADMIN_EMAIL"
 	    ;;
-	downtime )
+	maintenance )
 	    # TODO: make it so we remove the first argument
 	    emails_list=$(emails '' list all)
 	    all_emails="${emails_list// /;}"
 
-	    downtime_start=$2
-	    downtime_end=$3
-	    send_email "" "Server downtime" \
-"<p>Dear all,</p>
+	    case $2 in
+		start )
+		    # downtime is starting
+		    downtime_start=$3
+		    downtime_end=$4
+		    send_email "" "Server downtime" \
+			"<p>Dear all,</p>
 
 <p>Please note that <em>${NGGROUP_SERVER_NAME}</em> is going to be down for maintenance between <strong>${downtime_start}</strong> and <strong>${downtime_end}</strong>. Further emails may follow with updates. </p>
 " "$NGGROUP_SERVER_ADMIN_EMAIL" "set priority=high" "$all_emails"
+		    ;;
+		stop )
+		    # server coming back
+		    send_email "" "Server downtime" \
+			"<p>Dear all,</p>
+
+<p>Please note that <em>${NGGROUP_SERVER_NAME}</em> is back up following maintenance. </p>
+" "$NGGROUP_SERVER_ADMIN_EMAIL" "set priority=high" "$all_emails"
+		    ;;
+	    esac
+
 	    ;;
     esac
 
