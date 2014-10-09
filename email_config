@@ -15,6 +15,11 @@ as_mail_link () {
     echo "<a href='mailto:$1'>$1</a>"
 }
 
+get_email_from_user () {
+    user_file=$(printf "$USER_DIR_FORMAT" "$1")
+    echo "$(cut -d, -f3 $user_file) "
+}
+
 send_email () {
     # send_email $email $subject $message $cc $headers $bcc
     to_field="$1"
@@ -26,7 +31,13 @@ send_email () {
     header_content="set content_type=text/html; $5"
     bcc_field="$6"
 
-    if $SEND_EMAILS ;
+    if [ $($SEND_EMAILS) ] && [ ! $(which "$MAIL_CMD") ];
+    then
+	echo "Error: cannot email - no \`$MAIL_CMD\` installed"
+	return 1
+    fi
+
+    if $SEND_EMAILS;
     then
 	"$MAIL_CMD" -e "$header_content" -s "$subject_field" -c "$cc_field" -b "$bcc_field" "$to_field" "$body_content"
     else
@@ -44,13 +55,6 @@ $body_content
 }
 
 email () {
-    if [ $($SEND_EMAILS) ] && [ ! $(which "$MAIL_CMD") ];
-    then
-	echo "Error: cannot email - no \`$MAIL_CMD\` installed"
-	return 1
-    fi
-
-
     NGGROUP_EMAIL_ADDRESS="$2"
     case $1 in
 	new_user )
