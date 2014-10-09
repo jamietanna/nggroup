@@ -281,7 +281,7 @@ get_email_from_user () {
     echo "$(cut -d, -f3 $user_file) "
 }
 
-emails () {
+email_cmd () {
     case "$2" in
 	list*)
 	    case "$3" in
@@ -345,6 +345,6 @@ case $1 in
 	;;
 
     email* )
-	emails "$@"
+	email_cmd "$@"
 	;;
 esac
