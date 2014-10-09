@@ -45,8 +45,6 @@ The following features are subject to change, but will most probably be added as
 - circular refs?
 - pipe through to email
   - on:
-    - new user
     - user added to site/group
-    - manual (server maintenance)
 	- removed (for each?)
 - error function
