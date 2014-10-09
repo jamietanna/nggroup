@@ -7,8 +7,8 @@ testgroup2_path=$(printf $GROUP_DIR_FORMAT testgroup2)
 
 $CMD groupadd testgroup
 $CMD groupadd testgroup2
-$CMD useradd testuser password
-$CMD useradd testuser2 password2
+$CMD useradd testuser password test@localhost "Test User"
+$CMD useradd testuser2 password2 test2@localhost "Test User 2"
 
 # can add
 [ "$(len $testgroup_path)" == "0" ]

@@ -1,0 +1,119 @@
+# -*- mode: sh -*-
+
+MAIL_CMD=mutt
+
+as_li () {
+    echo "<li>" "$1" "</li>"
+}
+
+as_link () {
+    echo "<a href='$NGGROUP_SERVER_ROOT_URL/$1'>$1 on $NGGROUP_SERVER_NAME</a>"
+}
+
+as_mail_link () {
+    echo "<a href='mailto:$1'>$1</a>"
+}
+
+get_email_from_user () {
+    user_file=$(printf "$USER_DIR_FORMAT" "$1")
+    echo "$(cut -d, -f3 $user_file) "
+}
+
+send_email () {
+    # send_email $email $subject $message $cc $headers $bcc
+    to_field="$1"
+    subject_field="$2"
+    cc_field="$4"
+    body_content="$3
+<p><strong style='font-size: 85%'>Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL_LINK} instead.</strong></p>
+"
+    header_content="set content_type=text/html; $5"
+    bcc_field="$6"
+
+    if [ $($SEND_EMAILS) ] && [ ! $(which "$MAIL_CMD") ];
+    then
+	echo "Error: cannot email - no \`$MAIL_CMD\` installed"
+	return 1
+    fi
+
+    if $SEND_EMAILS;
+    then
+	"$MAIL_CMD" -e "$header_content" -s "$subject_field" -c "$cc_field" -b "$bcc_field" "$to_field" "$body_content"
+    else
+	echo "
+To: $to_field
+Cc: $cc_field
+Bcc: $bcc_field
+Subject: $subject_field
+Headers: $header_content
+------------------------
+$body_content
+
+************************"
+    fi
+}
+
+email () {
+    NGGROUP_EMAIL_ADDRESS="$2"
+    case $1 in
+	new_user )
+	    NGGROUP_EMAIL_NAME="$3"
+	    NGGROUP_EMAIL_USERNAME="$4"
+	    NGGROUP_EMAIL_PASSWORD="$5"
+	    NGGROUP_EMAIL_LINKS=()
+	    NGGROUP_EMAIL_LINKS_COUNT=0
+	    NGGROUP_SERVER_ADMIN_EMAIL_LINK=$(as_mail_link $NGGROUP_SERVER_ADMIN_EMAIL)
+	    for link in $6;
+	    do
+		NGGROUP_EMAIL_LINKS[$NGGROUP_EMAIL_LINKS_COUNT]=$(as_li "$(as_link $link)")
+		NGGROUP_EMAIL_LINKS_COUNT=$(( $NGGROUP_EMAIL_LINKS_COUNT + 1 ))
+	    done
+
+	    send_email "$NGGROUP_EMAIL_ADDRESS" "[${NGGROUP_SERVER_NAME}] Login details for ${NGGROUP_EMAIL_NAME}" \
+		"<p>Hi ${NGGROUP_EMAIL_NAME},</p>
+
+<p>Please find attached your login details for <em>${NGGROUP_SERVER_NAME}</em>.</p>
+
+<p>Details are as follows:</p>
+<ul>
+    <li>Username: <code>${NGGROUP_EMAIL_USERNAME}</code></li>
+    <li>Password: <code>${NGGROUP_EMAIL_PASSWORD}</code></li>
+</ul>
+
+<p>Sites available:</p>
+<ul>
+${NGGROUP_EMAIL_LINKS}
+</ul>
+</p>
+" "$NGGROUP_SERVER_ADMIN_EMAIL"
+	    ;;
+	maintenance )
+	    # TODO: make it so we remove the first argument
+	    emails_list=$(emails '' list all)
+	    all_emails="${emails_list// /;}"
+
+	    case $2 in
+		start )
+		    # downtime is starting
+		    downtime_start=$3
+		    downtime_end=$4
+		    send_email "" "Server downtime" \
+			"<p>Dear all,</p>
+
+<p>Please note that <em>${NGGROUP_SERVER_NAME}</em> is going to be down for maintenance between <strong>${downtime_start}</strong> and <strong>${downtime_end}</strong>. Further emails may follow with updates. </p>
+" "$NGGROUP_SERVER_ADMIN_EMAIL" "set priority=high" "$all_emails"
+		    ;;
+		stop )
+		    # server coming back
+		    send_email "" "Server downtime" \
+			"<p>Dear all,</p>
+
+<p>Please note that <em>${NGGROUP_SERVER_NAME}</em> is back up following maintenance. </p>
+" "$NGGROUP_SERVER_ADMIN_EMAIL" "set priority=high" "$all_emails"
+		    ;;
+	    esac
+
+	    ;;
+    esac
+
+}

@@ -44,22 +44,27 @@ site () {
 }
 
 user () {
-    local file
-    file=$(printf "$USER_DIR_FORMAT" "$2")
-    
+    local rules_file
+    local generated_file
+    rules_file=$(printf "$USER_DIR_FORMAT" "$2")
+    generated_file=$(printf "$USER_COMPLETE_DIR_FORMAT" "$2")
+
     case $1 in
 	useradd )
-	    contents=$(htpasswd -nb "$2" "$3")
-	    if [ -e "$file" ];
+	    if [ -e "$rules_file" ];
 	    then
 		echo "Error: user already exists."
 		exit 1
 	    fi
 
-	    echo "$contents" > "$file"
+	    # contents=$(htpasswd -nb "$2" "$3")
+	    # username, password, email, name
+	    echo "$2$USER_DIR_FORMAT_DELIM$3$USER_DIR_FORMAT_DELIM$4$USER_DIR_FORMAT_DELIM$5" > "$rules_file"
 	    ;;
+
+	# TODO: make a global?
 	userdel )
-	    if [ ! -e "$file" ];
+	    if [ ! -e "$rules_file" ];
 	    then
 		echo "Error: User does not exist."
 		exit 1
@@ -72,7 +77,12 @@ user () {
 		sed -i "/$user_format_regex/d" "$file_to_remove_from"
 	    done
 
-	    rm "$file"
+	    if [ -e "$generated_file" ];
+	    then
+		rm "$generated_file"
+	    fi
+
+	    rm "$rules_file" 
     esac
 }
 
@@ -180,6 +190,43 @@ mod_funct () {
 
 }
 
+generate () {
+    case "$1" in
+	users )
+	    generate_users
+	    ;;
+	sites )
+	    generate_sites
+	    ;;
+	* )
+	    generate "users"
+	    generate "sites"
+	    ;;
+    esac
+}
+
+generate_users () {
+    for user_rule_file in $USER_DIR/.*.rules;
+    do
+
+	if [ ! -e "$user_out_file" ];
+	then
+	    send_email=$EMAIL_NEW_USERS
+	fi
+	username=$(cat $user_rule_file | cut -f1 -d$USER_DIR_FORMAT_DELIM)
+	user_out_file=$(printf "$USER_COMPLETE_DIR_FORMAT" "$username")
+	user_password=$(cat $user_rule_file | cut -f2 -d$USER_DIR_FORMAT_DELIM)
+	user_email=$(cat $user_rule_file | cut -f3 -d$USER_DIR_FORMAT_DELIM)
+	user_name=$(cat $user_rule_file | cut -f4 -d$USER_DIR_FORMAT_DELIM)
+	echo $(htpasswd -nb "$username" "$user_password" ) > $user_out_file
+
+	if $send_email;
+	then
+	    email new_user "$user_email" "$user_name" "$username" "$user_password" "LIST_OF_SITES"
+	fi
+    done
+}
+
 generate_sites () {
     for rule_file in $SITES_DIR/.*.rules;
     do
@@ -213,7 +260,7 @@ generate_sites () {
 	    for user in $user_list
 	    do
 		local user_path
-		user_path=$(printf "$USER_DIR_FORMAT" "$user")
+		user_path=$(printf "$USER_COMPLETE_DIR_FORMAT" "$user")
 		cat "$user_path" >> "$site_file_tmp_path"
 	    done
 
@@ -226,6 +273,56 @@ generate_sites () {
 	    mv "$site_file_tmp_path" "$site_file_path"
 	fi
     done
+
+}
+
+get_email_from_user () {
+    user_file=$(printf "$USER_DIR_FORMAT" "$1")
+    echo "$(cut -d, -f3 $user_file) "
+}
+
+email_cmd () {
+    case "$2" in
+	list*)
+	    case "$3" in
+		g* )
+		    group=$(echo "$3" | cut -c 2-)
+		    group_file=$(printf "$GROUP_DIR_FORMAT" "$group")
+
+		    for username in $(cat $group_file);
+		    do
+			echo -n "$(get_email_from_user $username)"
+		    done
+		    ;;
+
+		s* )
+		    site=$(echo "$3" | cut -c 2-)
+		    site_file=$(printf "$SITES_DIR_FORMAT" "$site")
+		    for user_login in $(grep -v "^#" $site_file);
+		    do
+			username=$(echo $user_login | cut -f1 -d:)
+			echo -n "$(get_email_from_user $username)"
+		    done
+		    ;;
+
+		all | * )
+		    for user_path in users/*;
+		    do
+			username=$(echo $user_path | cut -f2 -d\/)
+			echo -n "$(get_email_from_user $username)"
+		    done
+		    echo ""
+		    ;;
+	    esac
+	    ;;
+	send*)
+	    case "$3" in
+		downtime )
+		    email downtime "$4" "$5" "$6"
+		    ;;
+	    esac
+	    ;;
+    esac
 
 }
 
@@ -242,8 +339,12 @@ case $1 in
     group* )
 	group "$@"
 	;;
-    generate )
-	generate_sites
+
+    generate* )
+	generate "$2"
+	;;
+
+    email* )
+	email_cmd "$@"
 	;;
 esac
-
