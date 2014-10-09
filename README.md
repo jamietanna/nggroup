@@ -31,6 +31,8 @@ Note that when removing performing `(user|group)del` you will remove all referen
 
 - No input validation
 - case statements don't have a default case
+- need to implement permissions
+  - add into tests
 
 ## Future Features (?)
 
@@ -41,6 +43,10 @@ The following features are subject to change, but will most probably be added as
 - autocomplete
 - groups can contain groups?
 - circular refs?
-- pipe through to email/other cmd
-  - user can choose what?
-  - format string
+- pipe through to email
+  - on:
+    - new user
+    - user added to site/group
+    - manual (server maintenance)
+	- removed (for each?)
+- error function
