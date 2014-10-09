@@ -1,7 +1,6 @@
 # -*- mode: sh -*-
 
 MAIL_CMD=mutt
-NEW_USER_EMAIL_SUBJECT="Login details for ${NGGROUP_EMAIL_NAME}"
 
 as_li () {
     echo "<li>" "$1" "</li>"
@@ -70,7 +69,7 @@ email () {
 		NGGROUP_EMAIL_LINKS_COUNT=$(( $NGGROUP_EMAIL_LINKS_COUNT + 1 ))
 	    done
 
-	    send_email "$NGGROUP_EMAIL_ADDRESS" "[${NGGROUP_SERVER_NAME}] $NEW_USER_EMAIL_SUBJECT" \
+	    send_email "$NGGROUP_EMAIL_ADDRESS" "[${NGGROUP_SERVER_NAME}] Login details for ${NGGROUP_EMAIL_NAME}" \
 		"<p>Hi ${NGGROUP_EMAIL_NAME},</p>
 
 <p>Please find attached your login details for <em>${NGGROUP_SERVER_NAME}</em>.</p>
