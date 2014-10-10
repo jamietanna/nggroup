@@ -33,6 +33,14 @@ Note that when removing performing `(user|group)del` you will remove all referen
 - case statements don't have a default case
 - need to implement permissions
   - add into tests
+- 
+
+## Dependencies
+
+- `htpasswd`, via `apache2-utils` (Ubuntu)
+  - Required for setting up users in common format for nginx
+- `mutt`
+  - Required for sending emails
 
 ## Future Features (?)
 
@@ -42,9 +50,15 @@ The following features are subject to change, but will most probably be added as
 - `tests.sh <testname>`
 - autocomplete
 - groups can contain groups?
-- circular refs?
+  - circular refs?
+    - store list of groups that are referenced
+    - if hit another of one in the list, break current iteration
+    - once all groups exhausted, expand and simplify (i.e. via `sort | uniq`)
 - pipe through to email
   - on:
     - user added to site/group
 	- removed (for each?)
 - error function
+- generate random passwords
+  - utilise `/usr/share/dict/words`
+
