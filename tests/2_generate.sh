@@ -9,12 +9,12 @@ $CMD useradd  testuser1 pwd test1@localhost "Test User"
 $CMD useradd  testuser2 pwd test2@localhost "Test User 2"
 $CMD useradd  testuser3 pwd test3@localhost "Test User 3"
 $CMD groupadd testgroup
-$CMD groupmod testgroup a utestuser1
-$CMD groupmod testgroup a utestuser2
+$CMD groupmod testgroup +testuser1
+$CMD groupmod testgroup +testuser2
 $CMD siteadd  testsite
 $CMD siteadd  testsite2
-$CMD sitemod  testsite  a gtestgroup
-$CMD sitemod  testsite2 a utestuser3
+$CMD sitemod  testsite  +@testgroup
+$CMD sitemod  testsite2 +testuser3
 
 # TODO: these should be stricter
 $CMD generate
