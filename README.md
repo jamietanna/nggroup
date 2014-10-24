@@ -58,7 +58,6 @@ The following features are subject to change, but will most probably be added as
   - on:
     - user added to site/group
 	- removed (for each?)
-- error function
 - generate random passwords
   - utilise `/usr/share/dict/words`
 

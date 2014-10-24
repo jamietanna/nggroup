@@ -31,15 +31,8 @@ fi
 
 . "$DIR/email_config"
 
+. "$DIR/global_functions"
 
-
-# only provide debugging info if we're not in production mode
-debug() {
-    if [ -n "$_IN_PRODUCTION" ];
-    then
-	echo "$@" >&2;
-    fi
-}
 
 # if we're not in production, use the current directory
 if [ -n "$_IN_PRODUCTION" ]; 
