@@ -37,7 +37,8 @@ Note that when removing performing `(user|group)del` you will remove all referen
 - case statements don't have a default case
 - need to implement permissions
   - add into tests
-- 
+- if `groupadd a`, then `groupmod <!a> +@a`, will get error; need to generate first
+- if try to generate when i.e. no sites exist, exits as error
 
 ## Dependencies
 
