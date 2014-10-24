@@ -6,6 +6,8 @@ set -e
 
 CMD=../nggroup
 
+TESTING=true
+
 error_alert () {
     >&2 echo "Error: test failed at $1:$2"
 }
