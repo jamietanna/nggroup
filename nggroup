@@ -245,12 +245,8 @@ generate_sites () {
 	all_groups=""
 	loose_users=""
 
-	debug "***********************$site_name"
 	while read -r line
 	do
-	    debug "LINE: $line"
-	    debug "CUT: $(echo "$line" | cut -c 1)"
-	    
 	    if [ "$(echo "$line" | cut -c 1)" == "@" ];
 	    then
 		all_groups+="$line "
@@ -277,8 +273,6 @@ generate_sites () {
 	    
 	    for member in $member_list
 	    do
-	    	# debug "LIST: $member_list"
-	    	# debug "$(echo $member | cut -c 1)"
 	    	if [ "$(echo $member | cut -c 1)" == "@" ];
 	    	then
 	    	    group=$(echo $member | cut -c 2-)
@@ -293,10 +287,6 @@ generate_sites () {
 	    done
 
 	done < "$rule_file"
-	debug "!!***********************"
-	
-	debug "A_G: $all_groups"
-	debug "PRIOR L_U: $loose_users"
 	
 	expanded_users="$loose_users"
 	groups_to_expand="$all_groups"
@@ -332,8 +322,6 @@ generate_sites () {
 	    fi
 	done
 
-	debug "DONE: $expanded_users"
-	
 	final_users=$(echo "$expanded_users" | sed 's/ /\n/g' | sort | uniq)
 	for user in $final_users;
 	do

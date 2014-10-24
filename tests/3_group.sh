@@ -12,7 +12,7 @@ $CMD groupadd testgroup1
 $CMD groupadd testgroup2
 $CMD siteadd testsite
 $CMD generate
-debug "-----------"
+
 $CMD groupmod testgroup1 +testuser1
 $CMD groupmod testgroup1 +testuser2
 $CMD groupmod testgroup2 +@testgroup1
