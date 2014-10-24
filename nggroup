@@ -142,6 +142,16 @@ mod_funct () {
 	context="$(echo $2 | cut -c 2-)"
     fi
 
+    if $is_group && [ "$context" == "all" ];
+    then
+	for user_path in $(ls $USER_DIR/*);
+	do
+	    echo $(basename $user_path) >> "$1"
+	done
+        return
+    fi
+
+
     if [ ! -e "$1" ];
     then
 	error $(printf "%s does not exist\n" "$3")
