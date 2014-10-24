@@ -50,9 +50,6 @@ Note that when removing performing `(user|group)del` you will remove all referen
 
 The following features are subject to change, but will most probably be added as they'll make my life easier:
 
-- rewrite calling conventions i.e.
-  - `nggroup u<user>` -> `nggroup <user>`
-  - `nggroup g<group>` -> `nggroup @<group>`
 - `nggroup setup < file.csv`
 - Add global group `@all`
 - `tests.sh <testname>`
