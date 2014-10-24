@@ -45,4 +45,17 @@ grep "^testuser3" $site_file > /dev/null
 grep "^testuser4" $site_file > /dev/null
 grep "^testuser5" $site_file > /dev/null
 
+$CMD useradd testuser6 pwd test6@localhost "Test User 6"
+$CMD groupadd testgroup3
+$CMD groupadd testgroup4
+$CMD siteadd testsite2
+
+$CMD generate
+
+$CMD groupmod testgroup3 +@testgroup4
+$CMD groupmod testgroup4 +@testgroup3
+$CMD sitemod testsite2 +@testgroup3
+
+$CMD generate
+
 # error "TODO: TEST GROUP1 -> GROUP2 -> GROUP1 DOESN'T BREAK IT"
