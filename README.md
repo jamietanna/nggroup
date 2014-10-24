@@ -37,7 +37,8 @@ Note that when removing performing `(user|group)del` you will remove all referen
 - case statements don't have a default case
 - need to implement permissions
   - add into tests
-- 
+- if `groupadd a`, then `groupmod <!a> +@a`, will get error; need to generate first
+- if try to generate when i.e. no sites exist, exits as error
 
 ## Dependencies
 
@@ -51,14 +52,16 @@ Note that when removing performing `(user|group)del` you will remove all referen
 The following features are subject to change, but will most probably be added as they'll make my life easier:
 
 - `nggroup setup < file.csv`
-- Add global group `@all`
 - `tests.sh <testname>`
 - autocomplete
-- groups can contain groups?
-  - circular refs?
-    - store list of groups that are referenced
-    - if hit another of one in the list, break current iteration
-    - once all groups exhausted, expand and simplify (i.e. via `sort | uniq`)
+- groups
+  - Add function `resolve_group`
+  - Add global group `@all`
+  - groups can contain groups?
+    - circular refs?
+      - store list of groups that are referenced
+      - if hit another of one in the list, break current iteration
+      - once all groups exhausted, expand and simplify (i.e. via `sort | uniq`)
 - pipe through to email
   - on:
     - user added to site/group

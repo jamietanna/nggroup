@@ -2,9 +2,9 @@
 
 # only provide debugging info if we're not in production mode
 debug() {
-    if [ -n "$_IN_PRODUCTION" ];
+    if [ -z "$_IN_PRODUCTION" ];
     then
-	echo "$@" >&2;
+	echo "DEBUG: $@" >&2
     fi
 }
 

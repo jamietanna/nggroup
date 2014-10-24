@@ -144,7 +144,7 @@ mod_funct () {
 
     if [ ! -e "$1" ];
     then
-	error $(printf "%s does not exist\n" "$4")
+	error $(printf "%s does not exist\n" "$3")
     fi
 
     context_friendly=$3
@@ -240,32 +240,95 @@ generate_sites () {
 	site_file_tmp_path=$site_file_path.tmp
 
 	[ -e "$site_file_tmp_path" ] && rm "$site_file_tmp_path"
+	touch "$site_file_tmp_path"
+
+	all_groups=""
+	loose_users=""
 
 	while read -r line
 	do
+	    if [ "$(echo "$line" | cut -c 1)" == "@" ];
+	    then
+		all_groups+="$line "
+	    else
+		loose_users+="$line "
+	    fi
+	    
 	    local user_list
-
+	    
 	    case $(echo "$line" | cut -c 1) in
-		@ )
-		    group_name=$(echo "$line" | cut -c 2-)
-		    group_file=$(printf "$GROUP_DIR_FORMAT" "$group_name")
-		    user_list=$(cat "$group_file")
-		    echo "# @$group_name" >> "$site_file_tmp_path"
-		    ;;
-		* )
-		    echo "# $line" >> "$site_file_tmp_path"
-		    user_list=$line
-		    ;;
+	    	@ )
+	    	    group_name=$(echo "$line" | cut -c 2-)
+	    	    group_file=$(printf "$GROUP_DIR_FORMAT" "$group_name")
+	    	    member_list=$(cat "$group_file")
+	    	    echo "# @$group_name" >> "$site_file_tmp_path"
+	    	    ;;
+	    	* )
+	    	    echo "# $line" >> "$site_file_tmp_path"
+	    	    member_list=$line
+	    	    ;;
 	    esac
-
-	    for user in $user_list
+	    
+	    # TODO: see README.md
+	    
+	    for member in $member_list
 	    do
-		local user_path
-		user_path=$(printf "$USER_COMPLETE_DIR_FORMAT" "$user")
-		cat "$user_path" >> "$site_file_tmp_path"
+	    	if [ "$(echo $member | cut -c 1)" == "@" ];
+	    	then
+	    	    group=$(echo $member | cut -c 2-)
+	    	    # need to have the group file grabbed here
+	    	else
+	    	    user=$member
+	    	    local user_path
+	    	    user_path=$(printf "$USER_COMPLETE_DIR_FORMAT" "$user")
+	    	    cat "$user_path" >> "$site_file_tmp_path"
+	    	fi
+	    
 	    done
 
 	done < "$rule_file"
+	
+	expanded_users="$loose_users"
+	groups_to_expand="$all_groups"
+	groups_expanded=""
+
+	while true;
+	do
+	    group=$(echo "$groups_to_expand" | cut -f1 -d" ")
+	    groups_to_expand=$(echo "$groups_to_expand" | cut -f2- -d" ")
+
+	    group_name=$(echo $group | cut -c 2-)
+	    group_file=$(printf "$GROUP_DIR_FORMAT" "$group_name")
+	    member_list=$(cat "$group_file")
+
+	    for member in $member_list;
+	    do
+		if [ "$(echo $member | cut -c 1)" == "@" ];
+		then
+		    if [[ ! "$groups_expanded" =~ "$member " ]];
+		    then
+			groups_to_expand+="$member "
+		    fi
+		else
+		    expanded_users+="$member "
+		fi
+	    done
+	    
+	    groups_expanded+="$group "
+
+	    if [ -z "$groups_to_expand" ] || [ "$groups_to_expand" == " " ] || [ "$group" == "$groups_to_expand" ];
+	    then
+		break
+	    fi
+	done
+
+	final_users=$(echo "$expanded_users" | sed 's/ /\n/g' | sort | uniq)
+	for user in $final_users;
+	do
+	    user_path=$(printf "$USER_COMPLETE_DIR_FORMAT" "$user")
+	    cat "$user_path" >> "$site_file_tmp_path"
+	done
+
 
 	# if we don't have a previous version, or if they're different,
 	#  we prioritise the newly generated file
