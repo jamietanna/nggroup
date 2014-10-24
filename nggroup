@@ -300,16 +300,13 @@ generate_sites () {
 	
 	expanded_users="$loose_users"
 	groups_to_expand="$all_groups"
+	groups_expanded=""
 
 	while true;
 	do
 	    group=$(echo "$groups_to_expand" | cut -f1 -d" ")
 	    groups_to_expand=$(echo "$groups_to_expand" | cut -f2- -d" ")
-	    debug "GRP: '$group'"
-	    debug "GRPS: '$groups_to_expand'"
 
-
-	    
 	    group_name=$(echo $group | cut -c 2-)
 	    group_file=$(printf "$GROUP_DIR_FORMAT" "$group_name")
 	    member_list=$(cat "$group_file")
@@ -318,12 +315,16 @@ generate_sites () {
 	    do
 		if [ "$(echo $member | cut -c 1)" == "@" ];
 		then
-		    groups_to_expand+="$member "
+		    if [[ ! "$groups_expanded" =~ "$member " ]];
+		    then
+			groups_to_expand+="$member "
+		    fi
 		else
 		    expanded_users+="$member "
 		fi
 	    done
 	    
+	    groups_expanded+="$group "
 
 	    if [ -z "$groups_to_expand" ] || [ "$groups_to_expand" == " " ] || [ "$group" == "$groups_to_expand" ];
 	    then
