@@ -6,11 +6,11 @@ $CMD useradd testuser pwd test@localhost "Test User"
 $CMD useradd testuser2 pwd test2@localhost "Test User 2"
 $CMD useradd testuser3 pwd test3@localhost "Test User 3"
 $CMD groupadd testgroup
-$CMD groupmod testgroup a utestuser
-$CMD groupmod testgroup a utestuser2
+$CMD groupmod testgroup +testuser
+$CMD groupmod testgroup +testuser2
 $CMD siteadd testsite
-$CMD sitemod testsite a gtestgroup
-$CMD sitemod testsite a utestuser3
+$CMD sitemod testsite +@testgroup
+$CMD sitemod testsite +testuser3
 
 # check it removes the actual file
 [ -e $(printf $USER_DIR_FORMAT testuser3) ]
