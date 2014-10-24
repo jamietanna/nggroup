@@ -2,10 +2,6 @@
 
 . $(dirname $0)/testing_environ
 
-echo "HACK --- @ $0"
-#exit 0
-echo "</HACK> --"
-
 $CMD useradd testuser1 pwd test1@localhost "Test User 1"
 $CMD useradd testuser2 pwd test2@localhost "Test User 2"
 $CMD useradd testuser3 pwd test3@localhost "Test User 3"
@@ -45,6 +41,9 @@ grep "^testuser3" $site_file > /dev/null
 grep "^testuser4" $site_file > /dev/null
 grep "^testuser5" $site_file > /dev/null
 
+
+# see if we get a recursive loop (2 groups)
+
 $CMD useradd testuser6 pwd test6@localhost "Test User 6"
 $CMD groupadd testgroup3
 $CMD groupadd testgroup4
@@ -52,10 +51,34 @@ $CMD siteadd testsite2
 
 $CMD generate
 
+$CMD groupmod testgroup3 +testuser6
 $CMD groupmod testgroup3 +@testgroup4
 $CMD groupmod testgroup4 +@testgroup3
 $CMD sitemod testsite2 +@testgroup3
 
 $CMD generate
 
-# error "TODO: TEST GROUP1 -> GROUP2 -> GROUP1 DOESN'T BREAK IT"
+
+# see if we get a recursive loop (3 groups)
+
+$CMD useradd testuser7 pwd test6@localhost "Test User 6"
+$CMD groupadd testgroup5
+$CMD groupadd testgroup6
+$CMD groupadd testgroup7
+$CMD groupadd testgroup8
+$CMD siteadd testsite3
+
+$CMD generate
+
+$CMD groupmod testgroup5 +testuser7
+$CMD groupmod testgroup5 +@testgroup6
+$CMD groupmod testgroup5 +@testgroup7
+$CMD groupmod testgroup6 +@testgroup5
+$CMD groupmod testgroup6 +@testgroup7
+$CMD groupmod testgroup7 +@testgroup5
+$CMD groupmod testgroup7 +@testgroup6
+
+$CMD sitemod testsite3 +@testgroup5
+
+$CMD generate
+
