@@ -87,7 +87,7 @@ ${NGGROUP_EMAIL_LINKS}
 </p>
 " "$NGGROUP_SERVER_ADMIN_EMAIL"
 	    ;;
-	maintenance )
+	downtime )
 	    # TODO: make it so we remove the first argument
 	    emails_list=$(emails '' list all)
 	    all_emails="${emails_list// /;}"
