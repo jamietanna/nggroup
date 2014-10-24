@@ -46,6 +46,10 @@ Note that when removing performing `(user|group)del` you will remove all referen
 
 The following features are subject to change, but will most probably be added as they'll make my life easier:
 
+- rewrite calling conventions i.e.
+  - `nggroup u<user>` -> `nggroup <user>`
+  - `nggroup g<group>` -> `nggroup @<group>`
+- `nggroup setup < file.csv`
 - Add global group `@all`
 - `tests.sh <testname>`
 - autocomplete
@@ -58,6 +62,10 @@ The following features are subject to change, but will most probably be added as
   - on:
     - user added to site/group
 	- removed (for each?)
+  - `nggroup emails new_user username`
+    - populates and sends
+    - `nggroup emails new_user username -`
+      - if `-`, prints to STDOUT
 - generate random passwords
   - utilise `/usr/share/dict/words`
 
