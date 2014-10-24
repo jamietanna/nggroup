@@ -1,0 +1,14 @@
+# -*- mode: sh -*-
+
+# only provide debugging info if we're not in production mode
+debug() {
+    if [ -n "$_IN_PRODUCTION" ];
+    then
+	echo "$@" >&2;
+    fi
+}
+
+error() {
+    echo "Error: $@" >&2
+    exit 1
+}
