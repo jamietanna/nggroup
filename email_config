@@ -39,9 +39,8 @@ send_email () {
     if $SEND_EMAILS;
     then
 	"$MAIL_CMD" -e "$header_content" -s "$subject_field" -c "$cc_field" -b "$bcc_field" "$to_field" "$body_content"
-    else
-	debug "### HACK"
-	return
+    elif ! $TESTING;
+    then
 	echo "
 To: $to_field
 Cc: $cc_field
