@@ -1,6 +1,7 @@
 # -*- mode: sh -*-
 
 MAIL_CMD=mutt
+ADMIN_USER=jamie
 
 as_li () {
     echo "<li>" "$1" "</li>"
@@ -38,7 +39,7 @@ send_email () {
 
     if $SEND_EMAILS;
     then
-	"$MAIL_CMD" -e "$header_content" -s "$subject_field" -c "$cc_field" -b "$bcc_field" "$to_field" "$body_content"
+       echo "$body_content" | sudo -u "$ADMIN_USER" "$MAIL_CMD" -e "$header_content" -s "$subject_field" -c "$cc_field" -b "$bcc_field" "$to_field"
     elif ! $TESTING;
     then
 	echo "
@@ -81,13 +82,8 @@ email () {
     <li>Password: <code>${NGGROUP_EMAIL_PASSWORD}</code></li>
 </ul>
 
-<p>Sites available:</p>
-<ul>
-${NGGROUP_EMAIL_LINKS}
-</ul>
-</p>
 " "$NGGROUP_SERVER_ADMIN_EMAIL"
-	    ;;
+        ;;
 	downtime )
 	    # TODO: make it so we remove the first argument
 	    emails_list=$(emails '' list all)
