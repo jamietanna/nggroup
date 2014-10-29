@@ -4,6 +4,8 @@
 
 nggroup is a tool hoping to solve this issue by allowing sysadmins to generate their own group files. A global group of users and groups can be accessed, and then can be fed into user-generated sites. The generated files can then be used by nginx as authentication files.
 
+**Note: This system is not written to be completely secure. Passwords are sent and stored in plaintext and cannot be changed by users. Ensure that no passwords stored in this system are passwords any user normally uses**
+
 ## Usage
 
 `nggroup siteadd <sitename>` - add a new site
