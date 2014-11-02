@@ -9,24 +9,39 @@ nggroup is a tool hoping to solve this issue by allowing sysadmins to generate t
 ## Usage
 
 `nggroup siteadd <sitename>` - add a new site
+
 `nggroup sitedel <sitename>` - remove the  site
+
 `nggroup sitemod <sitename> +<user>` - add user to site
+
 `nggroup sitemod <sitename> -<user>` - delete user from site
+
 `nggroup sitemod <sitename> +@<group>` - add group to site
+
 `nggroup sitemod <sitename> -@<group>` - delete group from site
 
+
 `nggroup groupadd <groupname>` - add a new group
+
 `nggroup groupdel <groupname>` - remove the group
+
 `nggroup groupmod <groupname> +<user>` - add user to group
+
 `nggroup groupmod <groupname> -<user>` - delete user from group
 
+
 `nggroup useradd <username> <password> <email_address> <full_name>` - add a new user
+
 `nggroup userdel <username>` - remove a user
+
 
 `nggroup generate` - generate all user, site and group files, as well as sending out appropriate emails
 
+
 `nggroup email list` - list all email addresses stored
+
 `nggroup email send downtime <start|stop> <start_time> <stop_time>` - email all users to indicate downtime has begun/ended
+
 
 Note that when removing performing `(user|group)del` you will remove all references to it. 
 
