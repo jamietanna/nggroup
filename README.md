@@ -59,7 +59,7 @@ Note that when removing performing `(user|group)del` you will remove all referen
   - anyone can read rule files
     - need to implement permissions
     - add into tests
-
+- not all greps are necessarily strict - can cause outliers
 ## Dependencies
 
 - `htpasswd`, via `apache2-utils` (Ubuntu)
