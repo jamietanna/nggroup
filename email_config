@@ -37,7 +37,7 @@ send_email () {
 	return 1
     fi
 
-    if $SEND_EMAILS;
+    if ! $TESTING && $SEND_EMAILS;
     then
        echo "$body_content" | sudo -u "$ADMIN_USER" "$MAIL_CMD" -e "$header_content" -s "$subject_field" -c "$cc_field" -b "$bcc_field" "$to_field"
     elif ! $TESTING;
@@ -57,60 +57,11 @@ $body_content
 
 email () {
     NGGROUP_EMAIL_ADDRESS="$2"
-    case $1 in
-	new_user )
-	    NGGROUP_EMAIL_NAME="$3"
-	    NGGROUP_EMAIL_USERNAME="$4"
-	    NGGROUP_EMAIL_PASSWORD="$5"
-	    NGGROUP_EMAIL_LINKS=()
-	    NGGROUP_EMAIL_LINKS_COUNT=0
-	    NGGROUP_SERVER_ADMIN_EMAIL_LINK=$(as_mail_link $NGGROUP_SERVER_ADMIN_EMAIL)
-	    for link in $6;
-	    do
-		NGGROUP_EMAIL_LINKS[$NGGROUP_EMAIL_LINKS_COUNT]=$(as_li "$(as_link $link)")
-		NGGROUP_EMAIL_LINKS_COUNT=$(( $NGGROUP_EMAIL_LINKS_COUNT + 1 ))
-	    done
-
-	    send_email "$NGGROUP_EMAIL_ADDRESS" "[${NGGROUP_SERVER_NAME}] Login details for ${NGGROUP_EMAIL_NAME}" \
-		"<p>Hi ${NGGROUP_EMAIL_NAME},</p>
-
-<p>Please find attached your login details for <em>${NGGROUP_SERVER_NAME}</em>.</p>
-
-<p>Details are as follows:</p>
-<ul>
-    <li>Username: <code>${NGGROUP_EMAIL_USERNAME}</code></li>
-    <li>Password: <code>${NGGROUP_EMAIL_PASSWORD}</code></li>
-</ul>
-
-" "$NGGROUP_SERVER_ADMIN_EMAIL"
-        ;;
-	downtime )
-	    # TODO: make it so we remove the first argument
-	    emails_list=$(emails '' list all)
-	    all_emails="${emails_list// /;}"
-
-	    case $2 in
-		start )
-		    # downtime is starting
-		    downtime_start=$3
-		    downtime_end=$4
-		    send_email "" "Server downtime" \
-			"<p>Dear all,</p>
-
-<p>Please note that <em>${NGGROUP_SERVER_NAME}</em> is going to be down for maintenance between <strong>${downtime_start}</strong> and <strong>${downtime_end}</strong>. Further emails may follow with updates. </p>
-" "$NGGROUP_SERVER_ADMIN_EMAIL" "set priority=high" "$all_emails"
-		    ;;
-		stop )
-		    # server coming back
-		    send_email "" "Server downtime" \
-			"<p>Dear all,</p>
-
-<p>Please note that <em>${NGGROUP_SERVER_NAME}</em> is back up following maintenance. </p>
-" "$NGGROUP_SERVER_ADMIN_EMAIL" "set priority=high" "$all_emails"
-		    ;;
-	    esac
-
-	    ;;
-    esac
-
+    email_cmd=$(printf $EMAILS_DIR_FORMAT $1)
+    if [ -e "$email_cmd" ];
+    then
+        $email_cmd $1 $2 $3 $4 $5 $6
+    else
+        echo "Error: $1 is not a valid email command"
+    fi
 }

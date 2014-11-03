@@ -233,7 +233,7 @@ generate_users () {
 
 	if $send_email;
 	then
-	    email new_user "$user_email" "$user_name" "$username" "$user_password" "LIST_OF_SITES"
+	    email new_user_email "$user_email" "$user_name" "$username" "$user_password" "LIST_OF_SITES"
 	fi
     done
 }
@@ -390,11 +390,7 @@ email_cmd () {
 	    esac
 	    ;;
 	send*)
-	    case "$3" in
-		downtime )
-		    email downtime "$4" "$5" "$6"
-		    ;;
-	    esac
+        email "$3" "$4" "$5" "$6"
 	    ;;
     esac
 
