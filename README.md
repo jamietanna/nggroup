@@ -60,6 +60,7 @@ Note that when removing performing `(user|group)del` you will remove all referen
     - need to implement permissions
     - add into tests
 - not all greps are necessarily strict - can cause outliers
+- Add function `resolve_group`
 ## Dependencies
 
 - `htpasswd`, via `apache2-utils` (Ubuntu)
@@ -73,11 +74,9 @@ The following features are subject to change, but will most probably be added as
 
 - dry run mode
   - ability to go through all the changes that we're going to make, and any potential issues
-- `nggroup setup < file.csv`
+- `nggroup setup file.csv`
 - `tests.sh <testname>`
 - autocomplete
-- groups
-  - Add function `resolve_group`
 - pipe through to email
   - on:
     - user added to site/group
