@@ -28,16 +28,20 @@ send_email () {
     body_content="$3
 <p><strong style='font-size: 85%'>Please note that this is an automated message and as such, any replies are not attended to. Please email sysadmin at ${NGGROUP_SERVER_ADMIN_EMAIL_LINK} instead.</strong></p>
 "
-    header_content="set content_type=text/html; $5"
+	header_content="set content_type=text/html"
+	if [ -n "$5" ];
+	then
+		header_content += "; $5"
+	fi
     bcc_field="$6"
 
     if [ $($SEND_EMAILS) ] && [ ! $(which "$MAIL_CMD") ];
     then
-	echo "Error: cannot email - no \`$MAIL_CMD\` installed"
-	return 1
+		echo "Error: cannot email - no \`$MAIL_CMD\` installed"
+		return 1
     fi
 
-    if ! $TESTING && $SEND_EMAILS;
+    if [ -z "$TESTING" ] && $SEND_EMAILS;
     then
        echo "$body_content" | sudo -u "$ADMIN_USER" "$MAIL_CMD" -e "$header_content" -s "$subject_field" -c "$cc_field" -b "$bcc_field" "$to_field"
     elif ! $TESTING;
@@ -60,7 +64,7 @@ email () {
     email_cmd=$(printf $EMAILS_DIR_FORMAT $1)
     if [ -e "$email_cmd" ];
     then
-        $email_cmd $1 $2 $3 $4 $5 $6
+        $email_cmd "$1" "$2" "$3" "$4" "$5" "$6"
     else
         echo "Error: $1 is not a valid email command"
     fi
