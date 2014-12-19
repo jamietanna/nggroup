@@ -50,7 +50,6 @@ Note that when removing performing `(user|group)del` you will remove all referen
 
 ## Known Issues
 
-- Regenerates & emails *all* accounts, not just new ones (not ideal)
 - No input validation
 - case statements don't have a default case
 - if `groupadd a`, then `groupmod <!a> +@a`, will get error; need to generate first
@@ -62,12 +61,6 @@ Note that when removing performing `(user|group)del` you will remove all referen
     - add into tests
 	- **encrypt pwd into rules file - then can't sniff**
 - not all greps are necessarily strict - can cause outliers
-- **does not follow the unix way**
-  - doing multiple things
-  - need to split it up
-	- `nggroup` - purely access rights!
-	- then an emailer
-	- something to query LDAP
 
 ## Dependencies
 
@@ -75,7 +68,6 @@ Note that when removing performing `(user|group)del` you will remove all referen
   - Required for setting up users in common format for nginx
 - `mutt`
   - Required for sending emails
-- Add function `resolve_group`
 
 ## Future Features (?)
 
@@ -86,14 +78,6 @@ The following features are subject to change, but will most probably be added as
 - `nggroup setup file.csv`
 - `tests.sh <testname>`
 - autocomplete
-- pipe through to email
-  - on:
-    - user added to site/group
-	- removed (for each?)
-  - `nggroup emails new_user username`
-    - populates and sends
-    - `nggroup emails new_user username -`
-      - if `-`, prints to STDOUT
 - generate random passwords
   - utilise `/usr/share/dict/words`
 
