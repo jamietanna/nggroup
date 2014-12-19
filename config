@@ -29,8 +29,6 @@ then
     exit 1
 fi
 
-. "$DIR/email_config"
-
 . "$DIR/global_functions"
 
 
@@ -58,15 +56,3 @@ GROUP_DIR=$HTPASS_DIR/groups
 GROUP_DIR_FORMAT="$GROUP_DIR/%s"
 GROUP_RULE_FORMAT="@%s"
 TMP_FILE=/tmp/nggrouptmp
-
-EMAILS_DIR=$DIR/emails
-EMAILS_DIR_FORMAT="$EMAILS_DIR/%s"
-
-SEND_EMAILS=false
-
-if [  $SEND_EMAILS ];
-then
-    EMAIL_NEW_USERS=true
-else
-    EMAIL_NEW_USERS=$SEND_EMAILS
-fi
