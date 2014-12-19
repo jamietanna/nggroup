@@ -60,6 +60,7 @@ Note that when removing performing `(user|group)del` you will remove all referen
   - anyone can read rule files
     - need to implement permissions
     - add into tests
+	- **encrypt pwd into rules file - then can't sniff**
 - not all greps are necessarily strict - can cause outliers
 - **does not follow the unix way**
   - doing multiple things
