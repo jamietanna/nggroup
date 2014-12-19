@@ -219,11 +219,6 @@ generate () {
 generate_users () {
     for user_rule_file in $USER_DIR/.*.rules;
     do
-
-	if [ ! -e "$user_out_file" ];
-	then
-	    send_email=$EMAIL_NEW_USERS
-	fi
 	username=$(cat $user_rule_file | cut -f1 -d$USER_DIR_FORMAT_DELIM)
 	user_out_file=$(printf "$USER_COMPLETE_DIR_FORMAT" "$username")
 	user_password=$(cat $user_rule_file | cut -f2 -d$USER_DIR_FORMAT_DELIM)
@@ -231,10 +226,6 @@ generate_users () {
 	user_name=$(cat $user_rule_file | cut -f4 -d$USER_DIR_FORMAT_DELIM)
 	echo $(htpasswd -nb "$username" "$user_password" ) > $user_out_file
 
-	if $send_email;
-	then
-	    email new_user_email "$user_email" "$user_name" "$username" "$user_password" "LIST_OF_SITES"
-	fi
     done
 }
 
@@ -355,47 +346,6 @@ get_email_from_user () {
     echo "$(cut -d, -f3 $user_file) "
 }
 
-email_cmd () {
-    case "$2" in
-	list*)
-	    case "$3" in
-		g* )
-		    group=$(echo "$3" | cut -c 2-)
-		    group_file=$(printf "$GROUP_DIR_FORMAT" "$group")
-
-		    for username in $(cat $group_file);
-		    do
-			echo -n "$(get_email_from_user $username)"
-		    done
-		    ;;
-
-		s* )
-		    site=$(echo "$3" | cut -c 2-)
-		    site_file=$(printf "$SITES_DIR_FORMAT" "$site")
-		    for user_login in $(grep -v "^#" $site_file);
-		    do
-			username=$(echo $user_login | cut -f1 -d:)
-			echo -n "$(get_email_from_user $username)"
-		    done
-		    ;;
-
-		all | * )
-		    for user_path in users/*;
-		    do
-			username=$(echo $user_path | cut -f2 -d\/)
-			echo -n "$(get_email_from_user $username)"
-		    done
-		    echo ""
-		    ;;
-	    esac
-	    ;;
-	send*)
-        email "$3" "$4" "$5" "$6"
-	    ;;
-    esac
-
-}
-
 # our main processing
 case $1 in
     site* )
@@ -414,7 +364,4 @@ case $1 in
 	generate "$2"
 	;;
 
-    email* )
-	email_cmd "$@"
-	;;
 esac
