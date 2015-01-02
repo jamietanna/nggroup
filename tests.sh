@@ -18,9 +18,9 @@ cd $WORKING_DIR
 
 for test_script in $TESTS_DIR/*.sh;
 do
-    $test_script
-    # clean up - no persistent data across tests
-    rm -rf groups sites users
+	$test_script
+	# clean up - no persistent data across tests
+	rm -rf groups sites users
 done
 
 ## </Tests>

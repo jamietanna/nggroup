@@ -5,7 +5,7 @@ RESULT=$?
 git stash pop -q
 if [ $RESULT -ne 0 ];
 then
-    echo "Error: Tests failed."
-    exit 1
+	echo "Error: Tests failed."
+	exit 1
 fi
 exit 0
