@@ -9,11 +9,11 @@ $CMD useradd testuser password test@localhost "Test User"
 [ -e "$testuser_path" ]
 
 testuser_file="$(cat $testuser_path)"
-only_delims="${testuser_file//[^$USER_DIR_FORMAT_DELIM]}"
-p1=$(echo $testuser_file | cut -f1 -d$USER_DIR_FORMAT_DELIM)
-p2=$(echo $testuser_file | cut -f2 -d$USER_DIR_FORMAT_DELIM)
-p3=$(echo $testuser_file | cut -f3 -d$USER_DIR_FORMAT_DELIM)
-p4=$(echo $testuser_file | cut -f4 -d$USER_DIR_FORMAT_DELIM)
+only_delims="${testuser_file//[^,]}"
+p1=$(echo $testuser_file | cut -f1 -d,)
+p2=$(echo $testuser_file | cut -f2 -d,)
+p3=$(echo $testuser_file | cut -f3 -d,)
+p4=$(echo $testuser_file | cut -f4 -d,)
 
 # three delims, four fields
 [ -n "$p1" ]

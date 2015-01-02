@@ -46,7 +46,7 @@ user () {
 
 		# contents=$(htpasswd -nb "$2" "$3")
 		# username, password, email, name
-		echo "$2$USER_DIR_FORMAT_DELIM$3$USER_DIR_FORMAT_DELIM$4$USER_DIR_FORMAT_DELIM$5" > "$rules_file"
+		csv "$2" "$3" "$4" "$5" > "$rules_file"
 		;;
 
 	# TODO: make a global?
@@ -183,11 +183,9 @@ generate () {
 generate_users () {
 	for user_rule_file in $USER_DIR/.*.rules;
 	do
-		username=$(cat $user_rule_file | cut -f1 -d$USER_DIR_FORMAT_DELIM)
+		username=$(cat $user_rule_file | cut -f1 -d,)
 		user_out_file=$(printf "$USER_COMPLETE_DIR_FORMAT" "$username")
-		user_password=$(cat $user_rule_file | cut -f2 -d$USER_DIR_FORMAT_DELIM)
-		user_email=$(cat $user_rule_file | cut -f3 -d$USER_DIR_FORMAT_DELIM)
-		user_name=$(cat $user_rule_file | cut -f4 -d$USER_DIR_FORMAT_DELIM)
+		user_password=$(cat $user_rule_file | cut -f2 -d,)
 		echo $(htpasswd -nb "$username" "$user_password" ) > $user_out_file
 	done
 }

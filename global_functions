@@ -12,3 +12,16 @@ error() {
 	echo "Error: $@" >&2
 	exit 1
 }
+
+csv() {
+	while [ -n "$1" ];
+	do
+		echo -n "$1"
+		if [ -n "$2" ];
+		then
+			echo -n ","
+		fi
+		shift
+	done
+	echo
+}
