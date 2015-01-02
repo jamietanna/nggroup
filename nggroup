@@ -23,15 +23,17 @@ site () {
 	siteadd )
 		if [ -e "$site_file" ];
 		then
-		error "Site already exists."
+			error "Site already exists."
 		fi
+
 		touch "$site_file"
 		;;
 	sitedel )
 		if [ ! -e "$site_file" ];
 		then
-		error "Site does not exist."
+			error "Site does not exist."
 		fi
+
 		rm "$site_file"
 		;;
 	sitemod )
@@ -50,7 +52,7 @@ user () {
 	useradd )
 		if [ -e "$rules_file" ];
 		then
-		error "user already exists."
+			error "user already exists."
 		fi
 
 		# contents=$(htpasswd -nb "$2" "$3")
@@ -62,19 +64,19 @@ user () {
 	userdel )
 		if [ ! -e "$rules_file" ];
 		then
-		error "User does not exist."
+			error "User does not exist."
 		fi
 
 		user_format_regex="^$(printf \"$USER_RULE_FORMAT\" $2)\$"
 
 		for file_to_remove_from in $(grep -lR "$user_format_regex" "$GROUP_DIR" "$SITES_DIR");
 		do
-		sed -i "/$user_format_regex/d" "$file_to_remove_from"
+			sed -i "/$user_format_regex/d" "$file_to_remove_from"
 		done
 
 		if [ -e "$generated_file" ];
 		then
-		rm "$generated_file"
+			rm "$generated_file"
 		fi
 
 		rm "$rules_file"
@@ -89,7 +91,7 @@ group () {
 	groupadd )
 		if [ -e "$group_file" ];
 		then
-		error "Group already exists."
+			error "Group already exists."
 		fi
 
 		touch "$group_file"
@@ -97,14 +99,14 @@ group () {
 	groupdel )
 		if [ ! -e "$group_file" ];
 		then
-		error "Group does not exist."
+			error "Group does not exist."
 		fi
 
 		group_format_regex="^$(printf \"$GROUP_RULE_FORMAT\" $2)\$"
 
 		for file_to_remove_from in $(grep -lR $group_format_regex "$GROUP_DIR" "$SITES_DIR");
 		do
-		sed -i "/$group_format_regex/d" "$file_to_remove_from"
+			sed -i "/$group_format_regex/d" "$file_to_remove_from"
 		done
 
 		rm "$group_file"
@@ -128,46 +130,46 @@ mod_funct () {
 
 	if [ "$(echo "$2" | cut -c 1)" == "+" ];
 	then
-	do_add=true
+		do_add=true
 	else
-	do_add=false
+		do_add=false
 	fi
 
 	if [ "$(echo $2 | cut -c 2)" == "@" ];
 	then
-	is_group=true
-	context="$(echo $2 | cut -c 3-)"
+		is_group=true
+		context="$(echo $2 | cut -c 3-)"
 	else
-	is_group=false
-	context="$(echo $2 | cut -c 2-)"
+		is_group=false
+		context="$(echo $2 | cut -c 2-)"
 	fi
 
 	if $is_group && [ "$context" == "all" ];
 	then
-	for user_path in $(ls $USER_DIR/*);
-	do
-		echo $(basename $user_path) >> "$1"
-	done
+		for user_path in $(ls $USER_DIR/*);
+		do
+			echo $(basename $user_path) >> "$1"
+		done
 		return
 	fi
 
 
 	if [ ! -e "$1" ];
 	then
-	error $(printf "%s does not exist\n" "$3")
+		error $(printf "%s does not exist\n" "$3")
 	fi
 
 	context_friendly=$3
 
 	if $is_group;
 	then
-	context_dir_format=$GROUP_DIR_FORMAT
-	context_rule_format=$GROUP_RULE_FORMAT
-	context_in_file_search="@$context"
+		context_dir_format=$GROUP_DIR_FORMAT
+		context_rule_format=$GROUP_RULE_FORMAT
+		context_in_file_search="@$context"
 	else
-	context_dir_format=$USER_DIR_FORMAT
-	context_rule_format=$USER_RULE_FORMAT
-	context_in_file_search=$context
+		context_dir_format=$USER_DIR_FORMAT
+		context_rule_format=$USER_RULE_FORMAT
+		context_in_file_search=$context
 	fi
 
 	context_file=$(printf "$context_dir_format" "$context")
@@ -186,16 +188,16 @@ mod_funct () {
 	then
 		if [ 0 -eq $context_in_file ];
 		then
-		error $(printf "%s is already part of the group.\n" $context_friendly)
+			error $(printf "%s is already part of the group.\n" $context_friendly)
 		else
-		echo "$context_insert" >> "$1"
+			echo "$context_insert" >> "$1"
 		fi
 	else
 		if [ 0 -eq "$context_in_file" ];
 		then
-		sed -i "/^$context_insert$/d" "$1"
+			sed -i "/^$context_insert$/d" "$1"
 		else
-		error $(printf "%s does not exist in the group.\n" $context_friendly)
+			error $(printf "%s does not exist in the group.\n" $context_friendly)
 		fi
 	fi
 
@@ -219,123 +221,122 @@ generate () {
 generate_users () {
 	for user_rule_file in $USER_DIR/.*.rules;
 	do
-	username=$(cat $user_rule_file | cut -f1 -d$USER_DIR_FORMAT_DELIM)
-	user_out_file=$(printf "$USER_COMPLETE_DIR_FORMAT" "$username")
-	user_password=$(cat $user_rule_file | cut -f2 -d$USER_DIR_FORMAT_DELIM)
-	user_email=$(cat $user_rule_file | cut -f3 -d$USER_DIR_FORMAT_DELIM)
-	user_name=$(cat $user_rule_file | cut -f4 -d$USER_DIR_FORMAT_DELIM)
-	echo $(htpasswd -nb "$username" "$user_password" ) > $user_out_file
-
+		username=$(cat $user_rule_file | cut -f1 -d$USER_DIR_FORMAT_DELIM)
+		user_out_file=$(printf "$USER_COMPLETE_DIR_FORMAT" "$username")
+		user_password=$(cat $user_rule_file | cut -f2 -d$USER_DIR_FORMAT_DELIM)
+		user_email=$(cat $user_rule_file | cut -f3 -d$USER_DIR_FORMAT_DELIM)
+		user_name=$(cat $user_rule_file | cut -f4 -d$USER_DIR_FORMAT_DELIM)
+		echo $(htpasswd -nb "$username" "$user_password" ) > $user_out_file
 	done
 }
 
 generate_sites () {
 	for rule_file in $SITES_DIR/.*.rules;
 	do
-	local site_file_insert
-	local site_name
-	local site_file_path
+		local site_file_insert
+		local site_name
+		local site_file_path
 
-	site_name=$(echo "$rule_file"  | sed 's/.*\.\(.*\)\..*/\1/g')
-	site_file_path=$(printf "$SITES_COMPLETE_DIR_FORMAT" "$site_name")
-	site_file_tmp_path=$site_file_path.tmp
+		site_name=$(echo "$rule_file"  | sed 's/.*\.\(.*\)\..*/\1/g')
+		site_file_path=$(printf "$SITES_COMPLETE_DIR_FORMAT" "$site_name")
+		site_file_tmp_path=$site_file_path.tmp
 
-	[ -e "$site_file_tmp_path" ] && rm "$site_file_tmp_path"
-	touch "$site_file_tmp_path"
+		[ -e "$site_file_tmp_path" ] && rm "$site_file_tmp_path"
+		touch "$site_file_tmp_path"
 
-	all_groups=""
-	loose_users=""
+		all_groups=""
+		loose_users=""
 
-	while read -r line
-	do
-		if [ "$(echo "$line" | cut -c 1)" == "@" ];
-		then
-		all_groups+="$line "
-		else
-		loose_users+="$line "
-		fi
-
-		local user_list
-
-		case $(echo "$line" | cut -c 1) in
-			@ )
-				group_name=$(echo "$line" | cut -c 2-)
-				group_file=$(printf "$GROUP_DIR_FORMAT" "$group_name")
-				member_list=$(cat "$group_file")
-				echo "# @$group_name" >> "$site_file_tmp_path"
-				;;
-			* )
-				echo "# $line" >> "$site_file_tmp_path"
-				member_list=$line
-				;;
-		esac
-
-		# TODO: see README.md
-
-		for member in $member_list
+		while read -r line
 		do
-			if [ "$(echo $member | cut -c 1)" == "@" ];
+			if [ "$(echo "$line" | cut -c 1)" == "@" ];
 			then
-				group=$(echo $member | cut -c 2-)
-				# need to have the group file grabbed here
+				all_groups+="$line "
 			else
-				user=$member
-				local user_path
-				user_path=$(printf "$USER_COMPLETE_DIR_FORMAT" "$user")
-				cat "$user_path" >> "$site_file_tmp_path"
+				loose_users+="$line "
 			fi
-
-		done
-
-	done < "$rule_file"
 	
-	expanded_users="$loose_users"
-	groups_to_expand="$all_groups"
-	groups_expanded=""
+			local user_list
 
-	while true;
-	do
-		group=$(echo "$groups_to_expand" | cut -f1 -d" ")
-		groups_to_expand=$(echo "$groups_to_expand" | cut -f2- -d" ")
+			case $(echo "$line" | cut -c 1) in
+				@ )
+					group_name=$(echo "$line" | cut -c 2-)
+					group_file=$(printf "$GROUP_DIR_FORMAT" "$group_name")
+					member_list=$(cat "$group_file")
+					echo "# @$group_name" >> "$site_file_tmp_path"
+					;;
+				* )
+					echo "# $line" >> "$site_file_tmp_path"
+					member_list=$line
+					;;
+			esac
 
-		group_name=$(echo $group | cut -c 2-)
-		group_file=$(printf "$GROUP_DIR_FORMAT" "$group_name")
-		member_list=$(cat "$group_file")
+			# TODO: see README.md
 
-		for member in $member_list;
-		do
-			if [ "$(echo $member | cut -c 1)" == "@" ];
-			then
-				if [[ ! "$groups_expanded" =~ "$member " ]];
+			for member in $member_list
+			do
+				if [ "$(echo $member | cut -c 1)" == "@" ];
 				then
-					groups_to_expand+="$member "
+					group=$(echo $member | cut -c 2-)
+					# need to have the group file grabbed here
+				else
+					user=$member
+					local user_path
+					user_path=$(printf "$USER_COMPLETE_DIR_FORMAT" "$user")
+					cat "$user_path" >> "$site_file_tmp_path"
 				fi
-			else
-				expanded_users+="$member "
+
+			done
+
+		done < "$rule_file"
+
+		expanded_users="$loose_users"
+		groups_to_expand="$all_groups"
+		groups_expanded=""
+
+		while true;
+		do
+			group=$(echo "$groups_to_expand" | cut -f1 -d" ")
+			groups_to_expand=$(echo "$groups_to_expand" | cut -f2- -d" ")
+
+			group_name=$(echo $group | cut -c 2-)
+			group_file=$(printf "$GROUP_DIR_FORMAT" "$group_name")
+			member_list=$(cat "$group_file")
+
+			for member in $member_list;
+			do
+				if [ "$(echo $member | cut -c 1)" == "@" ];
+				then
+					if [[ ! "$groups_expanded" =~ "$member " ]];
+					then
+						groups_to_expand+="$member "
+					fi
+				else
+					expanded_users+="$member "
+				fi
+			done
+
+			groups_expanded+="$group "
+
+			if [ -z "$groups_to_expand" ] || [ "$groups_to_expand" == " " ] || [ "$group" == "$groups_to_expand" ];
+			then
+				break
 			fi
 		done
 
-		groups_expanded+="$group "
+		final_users=$(echo "$expanded_users" | sed 's/ /\n/g' | sort | uniq)
+		for user in $final_users;
+		do
+			user_path=$(printf "$USER_COMPLETE_DIR_FORMAT" "$user")
+			cat "$user_path" >> "$site_file_tmp_path"
+		done
 
-		if [ -z "$groups_to_expand" ] || [ "$groups_to_expand" == " " ] || [ "$group" == "$groups_to_expand" ];
+		# if we don't have a previous version, or if they're different,
+		#  we prioritise the newly generated file
+		if [ ! -e "$site_file_path" ] || ! diff "$site_file_path" "$site_file_tmp_path" > /dev/null;
 		then
-			break
+			mv "$site_file_tmp_path" "$site_file_path"
 		fi
-	done
-
-	final_users=$(echo "$expanded_users" | sed 's/ /\n/g' | sort | uniq)
-	for user in $final_users;
-	do
-		user_path=$(printf "$USER_COMPLETE_DIR_FORMAT" "$user")
-		cat "$user_path" >> "$site_file_tmp_path"
-	done
-
-	# if we don't have a previous version, or if they're different,
-	#  we prioritise the newly generated file
-	if [ ! -e "$site_file_path" ] || ! diff "$site_file_path" "$site_file_tmp_path" > /dev/null;
-	then
-		mv "$site_file_tmp_path" "$site_file_path"
-	fi
 	done
 }
 
@@ -347,19 +348,19 @@ get_email_from_user () {
 # our main processing
 case $1 in
 	site* )
-	site "$@"
-	;;
+		site "$@"
+		;;
 
 	user* )
-	user "$@"
-	;;
+		user "$@"
+		;;
 
 	group* )
-	group "$@"
-	;;
+		group "$@"
+		;;
 
 	generate* )
-	generate "$2"
-	;;
+		generate "$2"
+		;;
 
 esac
