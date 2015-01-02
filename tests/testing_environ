@@ -10,11 +10,11 @@ TESTING=true
 SEND_EMAILS=false
 
 error_alert () {
-    >&2 echo "Error: test failed at $1:$2"
+	>&2 echo "Error: test failed at $1:$2"
 }
 
 trap 'error_alert $0 $LINENO' ERR
 
 len () {
-    cat $1 | wc -l 
+	cat $1 | wc -l
 }

@@ -2,13 +2,13 @@
 
 # only provide debugging info if we're not in production mode
 debug() {
-    if [ -z "$_IN_PRODUCTION" ];
-    then
+	if [ -z "$_IN_PRODUCTION" ];
+	then
 	echo "DEBUG: $@" >&2
-    fi
+	fi
 }
 
 error() {
-    echo "Error: $@" >&2
-    exit 1
+	echo "Error: $@" >&2
+	exit 1
 }

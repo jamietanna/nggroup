@@ -8,25 +8,25 @@ personal_config_errors=false
 
 if [ -z "$NGGROUP_SERVER_NAME" ];
 then
-    echo 'Error: Constant $NGGROUP_SERVER_NAME not set in \`personal_config\`'
-    personal_config_errors=true
+	echo 'Error: Constant $NGGROUP_SERVER_NAME not set in \`personal_config\`'
+	personal_config_errors=true
 fi
 
 if [ -z "$NGGROUP_SERVER_ROOT_URL" ];
 then
-    echo 'Error: Constant $NGGROUP_ROOT_URL not set in \`personal_config\`'
-    personal_config_errors=true
+	echo 'Error: Constant $NGGROUP_ROOT_URL not set in \`personal_config\`'
+	personal_config_errors=true
 fi
 
 if [ -z "$NGGROUP_SERVER_ADMIN_EMAIL" ];
 then
-    echo 'Error: Constant $NGGROUP_SERVER_ADMIN_EMAIL not set in \`personal_config\`'
-    personal_config_errors=true
+	echo 'Error: Constant $NGGROUP_SERVER_ADMIN_EMAIL not set in \`personal_config\`'
+	personal_config_errors=true
 fi
 
 if $personal_config_errors;
 then
-    exit 1
+	exit 1
 fi
 
 . "$DIR/global_functions"
@@ -35,9 +35,9 @@ fi
 # if we're not in production, use the current directory
 if [ -n "$_IN_PRODUCTION" ]; 
 then
-    HTPASS_DIR=/etc/nginx/htpasswd
+	HTPASS_DIR=/etc/nginx/htpasswd
 else
-    HTPASS_DIR=.
+	HTPASS_DIR=.
 fi
 
 # our standard config

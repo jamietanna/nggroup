@@ -19,7 +19,7 @@ $CMD sitemod  testsite2 +testuser3
 # TODO: these should be stricter
 $CMD generate
 grep "^# @testgroup$" $testsite_path > /dev/null
-grep "^testuser1"     $testsite_path > /dev/null
-grep "^testuser2"     $testsite_path > /dev/null
+grep "^testuser1"	 $testsite_path > /dev/null
+grep "^testuser2"	 $testsite_path > /dev/null
 grep "^# testuser3$"  $testsite2_path > /dev/null
-grep "^testuser3"     $testsite2_path > /dev/null
+grep "^testuser3"	 $testsite2_path > /dev/null
