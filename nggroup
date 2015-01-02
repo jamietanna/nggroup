@@ -21,19 +21,11 @@ site () {
 	site_file=$(printf "$SITES_DIR_FORMAT" "$2")
 	case $1 in
 	siteadd )
-		if [ -e "$site_file" ];
-		then
-			error "Site already exists."
-		fi
-
+		[ -e "$site_file" ] && error "Site already exists."
 		touch "$site_file"
 		;;
 	sitedel )
-		if [ ! -e "$site_file" ];
-		then
-			error "Site does not exist."
-		fi
-
+		[ ! -e "$site_file" ] && error "Site does not exist."
 		rm "$site_file"
 		;;
 	sitemod )
@@ -50,10 +42,7 @@ user () {
 
 	case $1 in
 	useradd )
-		if [ -e "$rules_file" ];
-		then
-			error "user already exists."
-		fi
+		[ -e "$rules_file" ] && error "user already exists."
 
 		# contents=$(htpasswd -nb "$2" "$3")
 		# username, password, email, name
@@ -62,10 +51,7 @@ user () {
 
 	# TODO: make a global?
 	userdel )
-		if [ ! -e "$rules_file" ];
-		then
-			error "User does not exist."
-		fi
+		[ ! -e "$rules_file" ] && error "User does not exist."
 
 		user_format_regex="^$(printf \"$USER_RULE_FORMAT\" $2)\$"
 
@@ -74,10 +60,8 @@ user () {
 			sed -i "/$user_format_regex/d" "$file_to_remove_from"
 		done
 
-		if [ -e "$generated_file" ];
-		then
-			rm "$generated_file"
-		fi
+		# delete, whether it exists or not
+		rm -f "$generated_file"
 
 		rm "$rules_file"
 	esac
@@ -89,19 +73,11 @@ group () {
 
 	case $1 in
 	groupadd )
-		if [ -e "$group_file" ];
-		then
-			error "Group already exists."
-		fi
-
+		[ -e "$group_file" ] && error "Group already exists."
 		touch "$group_file"
 		;;
 	groupdel )
-		if [ ! -e "$group_file" ];
-		then
-			error "Group does not exist."
-		fi
-
+		[ ! -e "$group_file" ] && error "Group does not exist."
 		group_format_regex="^$(printf \"$GROUP_RULE_FORMAT\" $2)\$"
 
 		for file_to_remove_from in $(grep -lR $group_format_regex "$GROUP_DIR" "$SITES_DIR");
@@ -119,7 +95,6 @@ group () {
 
 # a shared function for performing (site|group)mod
 mod_funct () {
-	local do_add
 	local is_group
 	local context
 	local context_file
@@ -127,13 +102,6 @@ mod_funct () {
 	local context_rule_format
 	local context_friendly
 	local context_in_file_search
-
-	if [ "$(echo "$2" | cut -c 1)" == "+" ];
-	then
-		do_add=true
-	else
-		do_add=false
-	fi
 
 	if [ "$(echo $2 | cut -c 2)" == "@" ];
 	then
@@ -154,10 +122,7 @@ mod_funct () {
 	fi
 
 
-	if [ ! -e "$1" ];
-	then
-		error $(printf "%s does not exist\n" "$3")
-	fi
+	[ ! -e "$1" ] && error $(printf "%s does not exist\n" "$3")
 
 	context_friendly=$3
 
@@ -175,16 +140,13 @@ mod_funct () {
 	context_file=$(printf "$context_dir_format" "$context")
 	context_insert=$(printf "$context_rule_format" "$context")
 
-	if [ ! -e "$context_file" ];
-	then
-		error $(printf "%s does not exist.\n" "$context_friendly")
-	fi
+	[ ! -e "$context_file" ] && error $(printf "%s does not exist.\n" "$context_friendly")
 
 	# TODO: make sure all greps are strict!
 	grep "^$context_in_file_search$" "$1" > /dev/null
 	context_in_file=$?
 
-	if $do_add;
+	if [ "$(echo "$2" | cut -c 1)" == "+" ];
 	then
 		if [ 0 -eq $context_in_file ];
 		then
@@ -241,7 +203,7 @@ generate_sites () {
 		site_file_path=$(printf "$SITES_COMPLETE_DIR_FORMAT" "$site_name")
 		site_file_tmp_path=$site_file_path.tmp
 
-		[ -e "$site_file_tmp_path" ] && rm "$site_file_tmp_path"
+		rm -f "$site_file_tmp_path"
 		touch "$site_file_tmp_path"
 
 		all_groups=""
