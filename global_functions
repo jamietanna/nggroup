@@ -29,3 +29,13 @@ csv() {
 	done
 	echo
 }
+
+isset() {
+	if [ -z "$1" ];
+	then
+		echoerr "$2"
+		return 1
+	else
+		return 0
+	fi
+}
