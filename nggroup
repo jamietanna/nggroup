@@ -300,11 +300,6 @@ generate_sites () {
 	done
 }
 
-get_email_from_user () {
-	user_file=$(printf "$USER_DIR_FORMAT" "$1")
-	echo "$(cut -d, -f3 $user_file) "
-}
-
 # our main processing
 case $1 in
 	site* )
