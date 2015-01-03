@@ -44,9 +44,36 @@ user () {
 	useradd )
 		[ -e "$rules_file" ] && error "user already exists."
 
-		# contents=$(htpasswd -nb "$2" "$3")
+		any_errors=false
+
+		if [ -z "$2" ];
+		then
+			any_errors=true
+			echoerr "Username is blank"
+		fi
+		if [ -z "$3" ];
+		then
+			any_errors=true
+			echoerr "Password is blank"
+		fi
+		if [ -z "$4" ];
+		then
+			any_errors=true
+			echoerr "Email is blank"
+		fi
+		if [ -z "$5" ];
+		then
+			any_errors=true
+			echoerr "Name is blank"
+		fi
+
 		# username, password, email, name
-		csv "$2" "$3" "$4" "$5" > "$rules_file"
+		if $any_errors;
+		then
+			error "Please fix the above errors"
+		else
+			csv "$2" "$3" "$4" "$5" > "$rules_file"
+		fi
 		;;
 
 	# TODO: make a global?

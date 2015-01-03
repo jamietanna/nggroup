@@ -29,5 +29,11 @@ p4=$(echo $testuser_file | cut -f4 -d,)
 $CMD useradd testuser2 password2 test2@localhost "Test User 2"
 $CMD userdel testuser2
 
+# can't add an incomplete user
+! $CMD useradd 2> /dev/null
+! $CMD useradd testuser3 2> /dev/null
+! $CMD useradd testuser3 password 2> /dev/null
+! $CMD useradd testuser3 password test@localhost 2> /dev/null
+
 # cleanup
 $CMD userdel testuser

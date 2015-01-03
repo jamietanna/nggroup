@@ -8,8 +8,12 @@ debug() {
 	fi
 }
 
-error() {
+echoerr () {
 	echo "Error: $@" >&2
+}
+
+error() {
+	echoerr "$@"
 	exit 1
 }
 
