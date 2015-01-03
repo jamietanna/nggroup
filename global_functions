@@ -1,23 +1,23 @@
 # -*- mode: sh -*-
 
 # only provide debugging info if we're not in production mode
-debug() {
+debug () {
 	if [ -z "$_IN_PRODUCTION" ];
 	then
 		echo "DEBUG: $@" >&2
 	fi
 }
 
-echoerr () {
+error () {
 	echo "Error: $@" >&2
 }
 
-error() {
-	echoerr "$@"
+die () {
+	error "$@"
 	exit 1
 }
 
-csv() {
+csv () {
 	while [ -n "$1" ];
 	do
 		echo -n "$1"
@@ -30,11 +30,28 @@ csv() {
 	echo
 }
 
-isset() {
+# isset
+#	str_check - check whether this string is set
+#	str_out   - output this if `str_check` is not set
+#	bool      - die if `str_check` is not set
+isset () {
+	local do_exit
+	if [ -z "$3" ];
+	then
+		do_exit=false
+	else
+		do_exit=$3
+	fi
+
 	if [ -z "$1" ];
 	then
-		echoerr "$2"
-		return 1
+		if $do_exit;
+		then
+			die "$2"
+		else
+			error "$2"
+			return 1
+		fi
 	else
 		return 0
 	fi

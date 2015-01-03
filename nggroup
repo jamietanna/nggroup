@@ -7,7 +7,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # if we're in production, we need root - have to access $HTPASS_DIR
 if [ -n "$_IN_PRODUCTION" ] && [ "$(id -u)" != "0" ];
 then
-	error "Must run as root."
+	die "Must run as root."
 fi
 
 # make sure we've got all our directories available
@@ -17,15 +17,14 @@ do
 done
 
 site () {
-	local site_file
-	site_file=$(printf "$SITES_DIR_FORMAT" "$2")
-	case $1 in
+	local site_file=$(printf "$SITES_DIR_FORMAT" "$2")
+	case "$1" in
 	siteadd )
-		[ -e "$site_file" ] && error "Site already exists."
+		[ -e "$site_file" ] && die "Site already exists."
 		touch "$site_file"
 		;;
 	sitedel )
-		[ ! -e "$site_file" ] && error "Site does not exist."
+		[ ! -e "$site_file" ] && die "Site does not exist."
 		rm "$site_file"
 		;;
 	sitemod )
@@ -42,10 +41,9 @@ user () {
 
 	case $1 in
 	useradd )
-		[ -e "$rules_file" ] && error "user already exists."
+		[ -e "$rules_file" ] && die "user already exists."
 
 		any_errors=false
-
 		isset "$2" "Username is blank" || any_errors=true
 		isset "$3" "Password is blank" || any_errors=true
 		isset "$4" "Email is blank" || any_errors=true
@@ -54,7 +52,7 @@ user () {
 		# username, password, email, name
 		if $any_errors;
 		then
-			error "Please fix the above errors"
+			die "Please fix the above errors"
 		else
 			csv "$2" "$3" "$4" "$5" > "$rules_file"
 		fi
@@ -62,7 +60,7 @@ user () {
 
 	# TODO: make a global?
 	userdel )
-		[ ! -e "$rules_file" ] && error "User does not exist."
+		[ ! -e "$rules_file" ] && die "User does not exist."
 
 		user_format_regex="^$(printf \"$USER_RULE_FORMAT\" $2)\$"
 
@@ -84,11 +82,11 @@ group () {
 
 	case $1 in
 	groupadd )
-		[ -e "$group_file" ] && error "Group already exists."
+		[ -e "$group_file" ] && die "Group already exists."
 		touch "$group_file"
 		;;
 	groupdel )
-		[ ! -e "$group_file" ] && error "Group does not exist."
+		[ ! -e "$group_file" ] && die "Group does not exist."
 		group_format_regex="^$(printf \"$GROUP_RULE_FORMAT\" $2)\$"
 
 		for file_to_remove_from in $(grep -lR $group_format_regex "$GROUP_DIR" "$SITES_DIR");
@@ -133,7 +131,7 @@ mod_funct () {
 	fi
 
 
-	[ ! -e "$1" ] && error $(printf "%s does not exist\n" "$3")
+	[ ! -e "$1" ] && die $(printf "%s does not exist\n" "$3")
 
 	context_friendly=$3
 
@@ -151,7 +149,7 @@ mod_funct () {
 	context_file=$(printf "$context_dir_format" "$context")
 	context_insert=$(printf "$context_rule_format" "$context")
 
-	[ ! -e "$context_file" ] && error $(printf "%s does not exist.\n" "$context_friendly")
+	[ ! -e "$context_file" ] && die $(printf "%s does not exist.\n" "$context_friendly")
 
 	# TODO: make sure all greps are strict!
 	grep "^$context_in_file_search$" "$1" > /dev/null
@@ -161,7 +159,7 @@ mod_funct () {
 	then
 		if [ 0 -eq $context_in_file ];
 		then
-			error $(printf "%s is already part of the group.\n" $context_friendly)
+			die $(printf "%s is already part of the group.\n" $context_friendly)
 		else
 			echo "$context_insert" >> "$1"
 		fi
@@ -170,7 +168,7 @@ mod_funct () {
 		then
 			sed -i "/^$context_insert$/d" "$1"
 		else
-			error $(printf "%s does not exist in the group.\n" $context_friendly)
+			die $(printf "%s does not exist in the group.\n" $context_friendly)
 		fi
 	fi
 
@@ -226,7 +224,7 @@ generate_sites () {
 			else
 				loose_users+="$line "
 			fi
-	
+
 			local user_list
 
 			case $(echo "$line" | cut -c 1) in

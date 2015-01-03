@@ -5,7 +5,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . "$DIR/global_functions"
 
 # TODO put section in README about this when installing
-[ ! -e "$DIR/personal_config" ] && error "Please create the \`personal_config\` file"
+[ ! -e "$DIR/personal_config" ] && die "Please create the \`personal_config\` file"
 
 . "$DIR/personal_config"
 
@@ -18,7 +18,7 @@ isset "$NGGROUP_SERVER_ADMIN_EMAIL" 'Constant $NGGROUP_SERVER_ADMIN_EMAIL not se
 
 if $personal_config_errors;
 then
-	error "Please fix the above errors before continuing"	
+	die "Please fix the above errors before continuing"
 fi
 
 # if we're not in production, use the current directory
