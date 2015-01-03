@@ -2,35 +2,24 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+. "$DIR/global_functions"
+
+# TODO put section in README about this when installing
+[ ! -e "$DIR/personal_config" ] && error "Please create the \`personal_config\` file"
+
 . "$DIR/personal_config"
 
 personal_config_errors=false
 
-if [ -z "$NGGROUP_SERVER_NAME" ];
-then
-	echo 'Error: Constant $NGGROUP_SERVER_NAME not set in \`personal_config\`'
-	personal_config_errors=true
-fi
-
-if [ -z "$NGGROUP_SERVER_ROOT_URL" ];
-then
-	echo 'Error: Constant $NGGROUP_ROOT_URL not set in \`personal_config\`'
-	personal_config_errors=true
-fi
-
-if [ -z "$NGGROUP_SERVER_ADMIN_EMAIL" ];
-then
-	echo 'Error: Constant $NGGROUP_SERVER_ADMIN_EMAIL not set in \`personal_config\`'
-	personal_config_errors=true
-fi
+# TODO need to cut down the repeated messages
+isset "$NGGROUP_SERVER_NAME" 'Constant $NGGROUP_SERVER_NAME not set in \`personal_config\`' || personal_config_errors=true
+isset "$NGGROUP_SERVER_ROOT_URL" 'Constant $NGGROUP_ROOT_URL not set in \`personal_config\`' || personal_config_errors=true
+isset "$NGGROUP_SERVER_ADMIN_EMAIL" 'Constant $NGGROUP_SERVER_ADMIN_EMAIL not set in \`personal_config\`' || personal_config_errors=true
 
 if $personal_config_errors;
 then
-	exit 1
+	error "Please fix the above errors before continuing"	
 fi
-
-. "$DIR/global_functions"
-
 
 # if we're not in production, use the current directory
 if [ -n "$_IN_PRODUCTION" ]; 
