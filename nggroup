@@ -106,11 +106,7 @@ group () {
 mod_funct () {
 	local is_group
 	local context
-	local context_file
-	local context_dir_format
-	local context_rule_format
-	local context_friendly
-	local context_in_file_search
+	local context_friendly=$3
 
 	if [ "$(echo $2 | cut -c 2)" == "@" ];
 	then
@@ -130,10 +126,11 @@ mod_funct () {
 		return
 	fi
 
-
 	[ ! -e "$1" ] && die $(printf "%s does not exist\n" "$3")
 
-	context_friendly=$3
+	local context_dir_format
+	local context_rule_format
+	local context_in_file_search
 
 	if $is_group;
 	then
@@ -146,32 +143,30 @@ mod_funct () {
 		context_in_file_search=$context
 	fi
 
-	context_file=$(printf "$context_dir_format" "$context")
-	context_insert=$(printf "$context_rule_format" "$context")
+	local context_file=$(printf "$context_dir_format" "$context")
+	local context_insert=$(printf "$context_rule_format" "$context")
 
 	[ ! -e "$context_file" ] && die $(printf "%s does not exist.\n" "$context_friendly")
 
-	# TODO: make sure all greps are strict!
-	grep "^$context_in_file_search$" "$1" > /dev/null
-	context_in_file=$?
+	local context_in_file=true
+	grep "^$context_in_file_search$" "$1" > /dev/null || context_in_file=false
 
 	if [ "$(echo "$2" | cut -c 1)" == "+" ];
 	then
-		if [ 0 -eq $context_in_file ];
+		if $context_in_file;
 		then
 			die $(printf "%s is already part of the group.\n" $context_friendly)
 		else
 			echo "$context_insert" >> "$1"
 		fi
 	else
-		if [ 0 -eq "$context_in_file" ];
+		if $context_in_file;
 		then
 			sed -i "/^$context_insert$/d" "$1"
 		else
 			die $(printf "%s does not exist in the group.\n" $context_friendly)
 		fi
 	fi
-
 }
 
 generate () {
