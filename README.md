@@ -76,4 +76,8 @@ The following features are subject to change, but will most probably be added as
 - autocomplete
 - generate random passwords
   - utilise `/usr/share/dict/words`
-
+- cleanup
+  - remove trailing spaces
+  - comments
+  - utilise `mktemp TEMPLATE`
+    - i.e. nggroupXXX
