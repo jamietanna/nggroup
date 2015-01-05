@@ -11,14 +11,14 @@ $CMD groupadd testgroup
 $CMD useradd testuser password test@localhost "Test User"
 
 # can add
-[ "$(len $testsite_path)" == "0" ]
+[ "$(num_entries $testsite_path)" == "0" ]
 $CMD sitemod testsite +@testgroup > /dev/null
-[ "$(len $testsite_path)" == "1" ]
+[ "$(num_entries $testsite_path)" == "1" ]
 grep "@testgroup" "$testsite_path" > /dev/null
 
 # can't add twice
 ! $CMD sitemod testsite +@testgroup > /dev/null
-[ "$(len $testsite_path)" == "1" ]
+[ "$(num_entries $testsite_path)" == "1" ]
 
 # can delete
 $CMD sitemod testsite -@testgroup

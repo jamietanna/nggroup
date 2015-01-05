@@ -92,7 +92,7 @@ $CMD generate
 #		testuser3
 #	testuser4
 #	testuser5
-[ "$(len $(get_site_complete_path testsite))" == "5" ]
+[ "$(num_entries $(get_site_complete_path testsite))" == "5" ]
 
 # testsite2 contains:
 #	@testgroup3
@@ -100,7 +100,7 @@ $CMD generate
 #			@testgroup3
 #				*** STOP
 #	testuser6
-[ "$(len $(get_site_complete_path testsite2))" == "1" ]
+[ "$(num_entries $(get_site_complete_path testsite2))" == "1" ]
 
 # testsite3 contains:
 #	@testgroup5
@@ -114,4 +114,4 @@ $CMD generate
 #		@testgroup6
 #	testuser7
 # NOTE: lots of recursion, but *SHOULD* only be one remaining user - testuser7
-[ "$(len $(get_site_complete_path testsite3))" == "1" ]
+[ "$(num_entries $(get_site_complete_path testsite3))" == "1" ]
