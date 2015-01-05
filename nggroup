@@ -192,64 +192,29 @@ generate_sites () {
 		rm -f "$site_file_tmp_path"
 		touch "$site_file_tmp_path"
 
-		all_groups=""
-		loose_users=""
+		local expanded_users=""
+		local groups_to_expand=""
+		local groups_expanded=""
 
 		while read -r line
 		do
 			if [ "$(echo "$line" | cut -c 1)" == "@" ];
 			then
-				all_groups+="$line "
+				groups_to_expand+="$line "
 			else
-				loose_users+="$line "
+				expanded_users+="$line "
 			fi
-
-			local user_list
-
-			case $(echo "$line" | cut -c 1) in
-				@ )
-					group_name=$(echo "$line" | cut -c 2-)
-					group_file=$(get_group_complete_path "$group_name")
-					member_list=$(cat "$group_file")
-					echo "# @$group_name" >> "$site_file_tmp_path"
-					;;
-				* )
-					echo "# $line" >> "$site_file_tmp_path"
-					member_list=$line
-					;;
-			esac
-
-			# TODO: see README.md
-
-			for member in $member_list
-			do
-				if [ "$(echo $member | cut -c 1)" == "@" ];
-				then
-					group=$(echo $member | cut -c 2-)
-					# need to have the group file grabbed here
-				else
-					user=$member
-					local user_path
-					user_path=$(get_user_complete_path "$user")
-					cat "$user_path" >> "$site_file_tmp_path"
-				fi
-
-			done
-
 		done < "$rule_file"
-
-		expanded_users="$loose_users"
-		groups_to_expand="$all_groups"
-		groups_expanded=""
 
 		while true;
 		do
-			group=$(echo "$groups_to_expand" | cut -f1 -d" ")
+			# TODO do this with shift/ for?
+			local group=$(echo "$groups_to_expand" | cut -f1 -d" ")
 			groups_to_expand=$(echo "$groups_to_expand" | cut -f2- -d" ")
 
-			group_name=$(echo $group | cut -c 2-)
-			group_file=$(get_group_complete_path "$group_name")
-			member_list=$(cat "$group_file")
+			local group_name=$(echo $group | cut -c 2-)
+			local group_file=$(get_group_complete_path "$group_name")
+			local member_list=$(cat "$group_file")
 
 			for member in $member_list;
 			do
