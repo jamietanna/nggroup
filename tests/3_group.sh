@@ -82,3 +82,36 @@ $CMD sitemod testsite3 +@testgroup5
 
 $CMD generate
 
+# we also need to check that we actually have correct output in our files
+
+# testsite contains:
+#	@testgroup2
+#		@testgroup1
+#			testuser1
+#			testuser2
+#		testuser3
+#	testuser4
+#	testuser5
+[ "$(len $(get_site_complete_path testsite))" == "5" ]
+
+# testsite2 contains:
+#	@testgroup3
+#		@testgroup4
+#			@testgroup3
+#				*** STOP
+#	testuser6
+[ "$(len $(get_site_complete_path testsite2))" == "1" ]
+
+# testsite3 contains:
+#	@testgroup5
+#		@testgroup6
+#		@testgroup7
+#	@testgroup6
+#		@testgroup5
+#		@testgroup7
+#	@testgroup7
+#		@testgroup5
+#		@testgroup6
+#	testuser7
+# NOTE: lots of recursion, but *SHOULD* only be one remaining user - testuser7
+[ "$(len $(get_site_complete_path testsite3))" == "1" ]
