@@ -22,8 +22,8 @@ $CMD sitemod testsite +testuser4
 $CMD sitemod testsite +testuser5
 $CMD generate
 
-group1_file=$(printf $GROUP_DIR_FORMAT testgroup1)
-group2_file=$(printf $GROUP_DIR_FORMAT testgroup2)
+group1_file=$(get_group_complete_path testgroup1)
+group2_file=$(get_group_complete_path testgroup2)
 
 [ $(wc -l $group1_file | cut -f1 -d" ") -eq 2 ]
 grep "^testuser1$" $group1_file > /dev/null
@@ -33,7 +33,7 @@ grep "^testuser2$" $group1_file > /dev/null
 grep "^@testgroup1$" $group2_file > /dev/null
 grep "^testuser3$" $group2_file > /dev/null
 
-site_file=$(printf "$SITES_COMPLETE_DIR_FORMAT" "testsite")
+site_file=$(get_site_complete_path "testsite")
 
 grep "^testuser1" $site_file > /dev/null
 grep "^testuser2" $site_file > /dev/null

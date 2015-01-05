@@ -17,7 +17,7 @@ do
 done
 
 site () {
-	local site_file=$(printf "$SITES_DIR_FORMAT" "$2")
+	local site_file=$(get_site_rule_path "$2")
 	case "$1" in
 	siteadd )
 		[ -e "$site_file" ] && die "Site already exists."
@@ -36,8 +36,8 @@ site () {
 user () {
 	local rules_file
 	local generated_file
-	rules_file=$(printf "$USER_DIR_FORMAT" "$2")
-	generated_file=$(printf "$USER_COMPLETE_DIR_FORMAT" "$2")
+	rules_file=$(get_user_rule_path "$2")
+	generated_file=$(get_user_complete_path "$2")
 
 	case $1 in
 	useradd )
@@ -62,7 +62,7 @@ user () {
 	userdel )
 		[ ! -e "$rules_file" ] && die "User does not exist."
 
-		user_format_regex="^$(printf \"$USER_RULE_FORMAT\" $2)\$"
+		user_format_regex="^$(get_user_rule_entry \"$2\")$"
 
 		for file_to_remove_from in $(grep -lR "$user_format_regex" "$GROUP_DIR" "$SITES_DIR");
 		do
@@ -78,7 +78,7 @@ user () {
 
 group () {
 	local group_file
-	group_file=$(printf "$GROUP_DIR_FORMAT" "$2")
+	group_file=$(get_group_complete_path "$2")
 
 	case $1 in
 	groupadd )
@@ -87,7 +87,7 @@ group () {
 		;;
 	groupdel )
 		[ ! -e "$group_file" ] && die "Group does not exist."
-		group_format_regex="^$(printf \"$GROUP_RULE_FORMAT\" $2)\$"
+		group_format_regex="^$(get_group_rule_entry \"$2\")$"
 
 		for file_to_remove_from in $(grep -lR $group_format_regex "$GROUP_DIR" "$SITES_DIR");
 		do
@@ -130,26 +130,22 @@ mod_funct () {
 
 	local context_dir_format
 	local context_rule_format
-	local context_in_file_search
+	local context_file
+	local context_insert
 
 	if $is_group;
 	then
-		context_dir_format=$GROUP_DIR_FORMAT
-		context_rule_format=$GROUP_RULE_FORMAT
-		context_in_file_search="@$context"
+		context_file=$(get_group_complete_path $context)
+		context_insert=$(get_group_rule_entry $context)
 	else
-		context_dir_format=$USER_DIR_FORMAT
-		context_rule_format=$USER_RULE_FORMAT
-		context_in_file_search=$context
+		context_file=$(get_user_rule_path $context)
+		context_insert=$(get_user_rule_entry $context)
 	fi
-
-	local context_file=$(printf "$context_dir_format" "$context")
-	local context_insert=$(printf "$context_rule_format" "$context")
 
 	[ ! -e "$context_file" ] && die $(printf "%s does not exist.\n" "$context_friendly")
 
 	local context_in_file=true
-	grep "^$context_in_file_search$" "$1" > /dev/null || context_in_file=false
+	grep "^$context_insert$" "$1" > /dev/null || context_in_file=false
 
 	if [ "$(echo "$2" | cut -c 1)" == "+" ];
 	then
@@ -188,7 +184,7 @@ generate_users () {
 	for user_rule_file in $USER_DIR/.*.rules;
 	do
 		username=$(cat $user_rule_file | cut -f1 -d,)
-		user_out_file=$(printf "$USER_COMPLETE_DIR_FORMAT" "$username")
+		user_out_file=$(get_user_complete_path "$username")
 		user_password=$(cat $user_rule_file | cut -f2 -d,)
 		echo $(htpasswd -nb "$username" "$user_password" ) > $user_out_file
 	done
@@ -202,7 +198,7 @@ generate_sites () {
 		local site_file_path
 
 		site_name=$(echo "$rule_file"  | sed 's/.*\.\(.*\)\..*/\1/g')
-		site_file_path=$(printf "$SITES_COMPLETE_DIR_FORMAT" "$site_name")
+		site_file_path=$(get_site_complete_path "$site_name")
 		site_file_tmp_path=$site_file_path.tmp
 
 		rm -f "$site_file_tmp_path"
@@ -225,7 +221,7 @@ generate_sites () {
 			case $(echo "$line" | cut -c 1) in
 				@ )
 					group_name=$(echo "$line" | cut -c 2-)
-					group_file=$(printf "$GROUP_DIR_FORMAT" "$group_name")
+					group_file=$(get_group_complete_path "$group_name")
 					member_list=$(cat "$group_file")
 					echo "# @$group_name" >> "$site_file_tmp_path"
 					;;
@@ -246,7 +242,7 @@ generate_sites () {
 				else
 					user=$member
 					local user_path
-					user_path=$(printf "$USER_COMPLETE_DIR_FORMAT" "$user")
+					user_path=$(get_user_complete_path "$user")
 					cat "$user_path" >> "$site_file_tmp_path"
 				fi
 
@@ -264,7 +260,7 @@ generate_sites () {
 			groups_to_expand=$(echo "$groups_to_expand" | cut -f2- -d" ")
 
 			group_name=$(echo $group | cut -c 2-)
-			group_file=$(printf "$GROUP_DIR_FORMAT" "$group_name")
+			group_file=$(get_group_complete_path "$group_name")
 			member_list=$(cat "$group_file")
 
 			for member in $member_list;
@@ -291,7 +287,7 @@ generate_sites () {
 		final_users=$(echo "$expanded_users" | sed 's/ /\n/g' | sort | uniq)
 		for user in $final_users;
 		do
-			user_path=$(printf "$USER_COMPLETE_DIR_FORMAT" "$user")
+			user_path=$(get_user_complete_path "$user")
 			cat "$user_path" >> "$site_file_tmp_path"
 		done
 

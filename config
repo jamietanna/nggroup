@@ -31,16 +31,32 @@ fi
 
 # our standard config
 SITES_DIR=$HTPASS_DIR/sites
-SITES_DIR_FORMAT="$SITES_DIR/.%s.rules"
-SITES_COMPLETE_DIR_FORMAT="$SITES_DIR/%s"
+get_site_rule_path () {
+	printf "$SITES_DIR/.%s.rules" "$1"
+}
+get_site_complete_path () {
+	printf "$SITES_DIR/%s" "$1"
+}
 
 USER_DIR=$HTPASS_DIR/users
-USER_DIR_FORMAT="$USER_DIR/.%s.rules"
-USER_COMPLETE_DIR_FORMAT="$USER_DIR/%s"
-USER_RULE_FORMAT="%s"
+
+get_user_rule_path () {
+	printf "$USER_DIR/.%s.rules" "$1"
+}
+get_user_complete_path () {
+	printf "$USER_DIR/%s" "$1"
+}
+get_user_rule_entry () {
+	printf "%s" "$1"
+}
 
 
 GROUP_DIR=$HTPASS_DIR/groups
-GROUP_DIR_FORMAT="$GROUP_DIR/%s"
-GROUP_RULE_FORMAT="@%s"
+get_group_complete_path () {
+	printf "$GROUP_DIR/%s" "$1"
+}
+get_group_rule_entry () {
+	printf "@%s" "$1"
+}
+
 TMP_FILE=/tmp/nggrouptmp

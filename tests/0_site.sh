@@ -2,7 +2,7 @@
 
 . $(dirname $0)/testing_environ
 
-testsite_path=$(printf $SITES_DIR_FORMAT testsite)
+testsite_path=$(get_site_rule_path testsite)
 
 $CMD siteadd testsite
 # TODO: have this in global vars

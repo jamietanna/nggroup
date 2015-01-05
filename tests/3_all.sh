@@ -13,7 +13,7 @@ $CMD siteadd testsite
 $CMD sitemod testsite +@all
 $CMD generate
 
-site_file=$(printf "$SITES_COMPLETE_DIR_FORMAT" "testsite")
+site_file=$(get_site_rule_path "testsite")
 
 grep "^testuser1" $site_file > /dev/null
 grep "^testuser2" $site_file > /dev/null
