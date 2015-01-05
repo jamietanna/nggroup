@@ -2,7 +2,7 @@
 
 . $(dirname $0)/testing_environ
 
-testuser_path=$(printf $USER_DIR_FORMAT testuser)
+testuser_path=$(get_user_rule_path testuser)
 
 $CMD useradd testuser password test@localhost "Test User"
 # TODO: have this in global vars

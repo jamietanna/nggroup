@@ -2,7 +2,7 @@
 
 . $(dirname $0)/testing_environ
 
-testgroup_path=$(printf $GROUP_DIR_FORMAT testgroup)
+testgroup_path=$(get_group_complete_path testgroup)
 
 $CMD groupadd testgroup
 [ -e $testgroup_path ]

@@ -2,8 +2,8 @@
 
 . $(dirname $0)/testing_environ
 
-testsite_path=$(printf $SITES_DIR_FORMAT testsite)
-testsite2_path=$(printf $SITES_DIR_FORMAT testsite2)
+testsite_path=$(get_site_rule_path testsite)
+testsite2_path=$(get_site_rule_path testsite2)
 
 $CMD siteadd testsite
 $CMD siteadd testsite2
