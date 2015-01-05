@@ -60,3 +60,15 @@ get_group_rule_entry () {
 }
 
 TMP_FILE=/tmp/nggrouptmp
+
+# if we're in production, we need root - have to access $HTPASS_DIR
+if [ -n "$_IN_PRODUCTION" ] && [ "$(id -u)" != "0" ];
+then
+	die "Must run as root."
+fi
+
+# make sure we've got all our directories available
+for directory in $HTPASS_DIR $SITES_DIR $USER_DIR $GROUP_DIR;
+do
+	mkdir -p "$directory"
+done
