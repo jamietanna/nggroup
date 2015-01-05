@@ -15,6 +15,6 @@ error_alert () {
 
 trap 'error_alert $0 $LINENO' ERR
 
-len () {
-	cat $1 | wc -l
+num_entries () {
+	wc -l < "$1"
 }
