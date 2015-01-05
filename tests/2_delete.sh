@@ -3,7 +3,7 @@
 . $(dirname $0)/testing_environ
 
 user3_path=$(get_user_rule_path testuser3)
-group_path=$(get_group_complete_path testgroup)
+group_path=$(get_group_rules_path testgroup)
 site_path=$(get_site_rule_path testsite)
 user_entry=$(get_user_rule_entry testuser3)
 group_entry=$(get_group_rule_entry testgroup)

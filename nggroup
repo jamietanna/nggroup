@@ -66,7 +66,7 @@ user () {
 
 group () {
 	local group_file
-	group_file=$(get_group_complete_path "$2")
+	group_file=$(get_group_rules_path "$2")
 
 	case $1 in
 	groupadd )
@@ -123,7 +123,7 @@ mod_funct () {
 
 	if $is_group;
 	then
-		context_file=$(get_group_complete_path $context)
+		context_file=$(get_group_rules_path $context)
 		context_insert=$(get_group_rule_entry $context)
 	else
 		context_file=$(get_user_rule_path $context)
@@ -213,7 +213,7 @@ generate_sites () {
 			groups_to_expand=$(echo "$groups_to_expand" | cut -f2- -d" ")
 
 			local group_name=$(echo $group | cut -c 2-)
-			local group_file=$(get_group_complete_path "$group_name")
+			local group_file=$(get_group_rules_path "$group_name")
 			local member_list=$(cat "$group_file")
 
 			for member in $member_list;

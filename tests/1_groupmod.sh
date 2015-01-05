@@ -2,8 +2,8 @@
 
 . $(dirname $0)/testing_environ
 
-testgroup_path=$(get_group_complete_path testgroup)
-testgroup2_path=$(get_group_complete_path testgroup2)
+testgroup_path=$(get_group_rules_path testgroup)
+testgroup2_path=$(get_group_rules_path testgroup2)
 
 $CMD groupadd testgroup
 $CMD groupadd testgroup2

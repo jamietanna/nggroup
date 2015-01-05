@@ -52,7 +52,7 @@ get_user_rule_entry () {
 
 
 GROUP_DIR=$HTPASS_DIR/groups
-get_group_complete_path () {
+get_group_rules_path () {
 	printf "$GROUP_DIR/%s" "$1"
 }
 get_group_rule_entry () {
