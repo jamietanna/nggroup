@@ -170,7 +170,7 @@ generate () {
 }
 
 generate_users () {
-	for user_rule_file in $USER_DIR/.*.rules;
+	for user_rule_file in $(get_user_rule_path "*");
 	do
 		username=$(cat $user_rule_file | cut -f1 -d,)
 		user_out_file=$(get_user_complete_path "$username")
@@ -180,7 +180,7 @@ generate_users () {
 }
 
 generate_sites () {
-	for rule_file in $SITES_DIR/.*.rules;
+	for rule_file in $(get_site_rule_path "*");
 	do
 		local site_file_insert
 		local site_name
