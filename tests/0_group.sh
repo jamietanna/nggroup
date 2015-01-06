@@ -8,7 +8,7 @@ $CMD groupadd testgroup
 [ -e $testgroup_path ]
 
 # Know we can't delete non existent
-! $CMD groupdel testgroup2 > /dev/null
+! $CMD groupdel testgroup2 2> /dev/null
 
 $CMD groupadd testgroup2
 $CMD groupdel testgroup2
