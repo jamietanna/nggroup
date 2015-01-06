@@ -10,7 +10,7 @@ TESTING=true
 SEND_EMAILS=false
 
 error_alert () {
-	>&2 echo "Error: test failed at $1:$2"
+	>&2 echo -e "\t\033[91mError: test failed at $1:$2\033[0m"
 }
 
 trap 'error_alert $0 $LINENO' ERR
