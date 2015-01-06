@@ -109,8 +109,6 @@ Note that when removing performing `(user|group)del` you will remove all referen
 
 - **insecure**
   - keeping password on command line
-  - anyone can read rule files
-    - **encrypt pwd into rules file - then can't sniff**
 - not all greps are necessarily strict - can cause outliers
 - No input validation
 - case statements don't have a default case
