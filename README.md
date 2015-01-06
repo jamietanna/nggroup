@@ -103,8 +103,6 @@ nggroup groupdel testgroup
 `nggroup generate` - generate all user, site and group files
 
 
-`nggroup email list` - list all email addresses stored
-
 Note that when removing performing `(user|group)del` you will remove all references to it.
 
 ## Known Issues
@@ -138,3 +136,5 @@ The following features are subject to change, but will most probably be added as
   - comments
   - utilise `mktemp TEMPLATE`
     - i.e. nggroupXXX
+- list emails stored
+  - `nggroup emails (|user|group)`
