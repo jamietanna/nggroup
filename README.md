@@ -107,17 +107,15 @@ Note that when removing performing `(user|group)del` you will remove all referen
 
 ## Known Issues
 
+- **insecure**
+  - keeping password on command line
+  - anyone can read rule files
+    - **encrypt pwd into rules file - then can't sniff**
+- not all greps are necessarily strict - can cause outliers
 - No input validation
 - case statements don't have a default case
 - if `groupadd a`, then `groupmod <!a> +@a`, will get error; need to generate first
 - if try to generate when i.e. no sites exist, exits as error
-- **insecure**
-  - keeping password on command line
-  - anyone can read rule files
-    - need to implement permissions
-    - add into tests
-    - **encrypt pwd into rules file - then can't sniff**
-- not all greps are necessarily strict - can cause outliers
 
 ## Future Features (?)
 
@@ -126,7 +124,10 @@ The following features are subject to change, but will most probably be added as
 - dry run mode
   - ability to go through all the changes that we're going to make, and any potential issues
 - `nggroup setup file.csv`
-- `tests.sh <testname>`
+- tests
+  - `tests.sh <testname>`
+  - [https://github.com/sstephenson/bats](https://github.com/sstephenson/bats)
+  - output how many tests done/left
 - autocomplete
 - generate random passwords
   - utilise `/usr/share/dict/words`
