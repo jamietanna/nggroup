@@ -26,7 +26,13 @@ if [ -n "$_IN_PRODUCTION" ];
 then
 	HTPASS_DIR=/etc/nginx/htpasswd
 else
-	HTPASS_DIR=.
+	# overwrite - we want it in our temp dir, not in the root of the project
+	if [ -n "$TESTING" ];
+	then
+		HTPASS_DIR=$DIR
+	else
+		HTPASS_DIR=.
+	fi
 fi
 
 # our standard config

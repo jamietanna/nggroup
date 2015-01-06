@@ -58,7 +58,6 @@ $CMD sitemod testsite2 +@testgroup3
 
 $CMD generate
 
-
 # see if we get a recursive loop (3 groups)
 
 $CMD useradd testuser7 pwd test6@localhost "Test User 6"
