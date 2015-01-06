@@ -17,25 +17,25 @@ $CMD sitemod testsite +@testgroup > /dev/null
 grep "@testgroup" "$testsite_path" > /dev/null
 
 # can't add twice
-! $CMD sitemod testsite +@testgroup > /dev/null
+! $CMD sitemod testsite +@testgroup 2> /dev/null
 [ "$(num_entries $testsite_path)" == "1" ]
 
 # can delete
 $CMD sitemod testsite -@testgroup
-! grep testgroup "$testsite_path"  > /dev/null
+! grep testgroup "$testsite_path"  2> /dev/null
 
 # can't re delete
-! $CMD sitemod testsite -@testgroup > /dev/null
+! $CMD sitemod testsite -@testgroup 2> /dev/null
 
 
 
 # with a vali-@roup
-! $CMD sitemod testsite -@testgroup > /dev/null
+! $CMD sitemod testsite -@testgroup 2> /dev/null
 # with an invali-@roup
-! $CMD sitemod testsite -@testgroup2 > /dev/null
+! $CMD sitemod testsite -@testgroup2 2> /dev/null
 
 # with an invalid site
-! $CMD sitemod testsite2 -@testgroup > /dev/null
+! $CMD sitemod testsite2 -@testgroup 2> /dev/null
 
 
 $CMD sitemod testsite2 +testuser

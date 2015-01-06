@@ -208,6 +208,10 @@ generate_sites () {
 
 		while true;
 		do
+			if [ -z "$groups_to_expand" ] || [ "$groups_to_expand" == " " ] || [ "$group" == "$groups_to_expand" ];
+			then
+				break
+			fi
 			# TODO do this with shift/ for?
 			local group=$(echo "$groups_to_expand" | cut -f1 -d" ")
 			groups_to_expand=$(echo "$groups_to_expand" | cut -f2- -d" ")
@@ -230,11 +234,6 @@ generate_sites () {
 			done
 
 			groups_expanded+="$group "
-
-			if [ -z "$groups_to_expand" ] || [ "$groups_to_expand" == " " ] || [ "$group" == "$groups_to_expand" ];
-			then
-				break
-			fi
 		done
 
 		final_users=$(echo "$expanded_users" | sed 's/ /\n/g' | sort | uniq)

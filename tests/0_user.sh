@@ -24,7 +24,7 @@ p4=$(echo $testuser_file | cut -f4 -d,)
 
 
 # Know we can't delete non existent
-! $CMD userdel testuser2 > /dev/null
+! $CMD userdel testuser2 2> /dev/null
 
 $CMD useradd testuser2 password2 test2@localhost "Test User 2"
 $CMD userdel testuser2

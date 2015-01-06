@@ -9,7 +9,7 @@ $CMD siteadd testsite
 [ -e "$testsite_path" ]
 
 # Know we can't delete non existent
-! $CMD sitedel testsite2 > /dev/null
+! $CMD sitedel testsite2 2> /dev/null
 
 $CMD siteadd testsite2
 $CMD sitedel testsite2

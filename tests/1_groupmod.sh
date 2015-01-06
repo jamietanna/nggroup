@@ -19,7 +19,7 @@ grep testuser $testgroup_path  > /dev/null
 
 
 # can't readd
-! $CMD groupmod testgroup +testuser  > /dev/null
+! $CMD groupmod testgroup +testuser  2> /dev/null
 [ "$(num_entries $testgroup_path)" == "1" ]
 
 
@@ -30,8 +30,6 @@ grep testuser2 $testgroup_path  > /dev/null
 # not in the other group
 ! grep testuser  $testgroup2_path  > /dev/null
 ! grep testuser2 $testgroup2_path > /dev/null
-
-
 
 [ "$(num_entries $testgroup2_path)" == "0" ]
 $CMD groupmod testgroup2 +@testgroup
