@@ -14,11 +14,28 @@ rm -rf $WORKING_DIR
 mkdir -p $WORKING_DIR
 cd $WORKING_DIR
 
+success () {
+	echo -e "\033[92m$@\033[0m"
+}
+
+failure () {
+	>&2 echo -e "\033[91m$@\033[0m"
+}
+
+cleanup () {
+	failure "**FAIL"
+	cd $DIR
+	rm -rf $WORKING_DIR
+}
+
+trap 'cleanup; exit 1' ERR
+
 ## <Tests>
 
 for test_script in $TESTS_DIR/*.sh;
 do
 	$test_script
+	success "\tPassed: $test_script"
 	# clean up - no persistent data across tests
 	rm -rf groups sites users
 done
@@ -28,4 +45,4 @@ done
 # Clean up here if we get this far
 rm -rf $WORKING_DIR
 
-echo "All tests passed"
+success "**All tests passed"
