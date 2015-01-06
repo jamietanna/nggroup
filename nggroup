@@ -186,17 +186,21 @@ generate_sites () {
 		local site_name
 		local site_file_path
 
+		# grab out the nice name from the format string that is
+		#  created from `get_site_rule_path`
 		site_name=$(echo "$rule_file"  | sed 's/.*\.\(.*\)\..*/\1/g')
 		site_file_path=$(get_site_complete_path "$site_name")
 		site_file_tmp_path=$site_file_path.tmp
 
-		rm -f "$site_file_tmp_path"
-		touch "$site_file_tmp_path"
+		# truncate the temporary file
+		#  optimisation via http://stackoverflow.com/a/13576390
+		> "$site_file_tmp_path"
 
 		local expanded_users=""
 		local groups_to_expand=""
 		local groups_expanded=""
 
+		# first go through rule file, and make note of groups and users
 		while read -r line
 		do
 			if [ "$(echo "$line" | cut -c 1)" == "@" ];
@@ -206,17 +210,16 @@ generate_sites () {
 				expanded_users+="$line "
 			fi
 		done < "$rule_file"
-
 		while true;
 		do
-			if [ -z "$groups_to_expand" ] || [ "$groups_to_expand" == " " ] || [ "$group" == "$groups_to_expand" ];
-			then
-				break
-			fi
-			# TODO do this with shift/ for?
+			# take the head of the list
 			local group=$(echo "$groups_to_expand" | cut -f1 -d" ")
+			# and remove the head from the remainder of the list
 			groups_to_expand=$(echo "$groups_to_expand" | cut -f2- -d" ")
+			# if we have a null group - where a site is empty
+			[ -z "$group" ] && break
 
+			# remove the @ sign from the group
 			local group_name=$(echo $group | cut -c 2-)
 			local group_file=$(get_group_rules_path "$group_name")
 			local member_list=$(cat "$group_file")
@@ -225,6 +228,7 @@ generate_sites () {
 			do
 				if [ "$(echo $member | cut -c 1)" == "@" ];
 				then
+					# make sure we don't keep re-expanding - infinite recursion
 					if [[ ! "$groups_expanded" =~ "$member " ]];
 					then
 						groups_to_expand+="$member "
@@ -234,9 +238,21 @@ generate_sites () {
 				fi
 			done
 
+			# make note so next time we don't try to re-expand it
 			groups_expanded+="$group "
+			# if:
+			#  our remainder is empty
+			#  or if the /whole/ remainder is the same group we're currently
+			# then we don't need to carry on expanding
+			if [ -z "$groups_to_expand" ] || [ "$groups_to_expand" == " " ] || [ "$group" == "$groups_to_expand" ];
+			then
+				break
+			fi
 		done
 
+
+		# finally grab all the users we have, make sure we only have one of each
+		#  and then output their files into our temporary site
 		final_users=$(echo "$expanded_users" | sed 's/ /\n/g' | sort | uniq)
 		for user in $final_users;
 		do
@@ -245,7 +261,7 @@ generate_sites () {
 		done
 
 		# if we don't have a previous version, or if they're different,
-		#  we prioritise the newly generated file
+		#	we prioritise the newly generated file
 		if [ ! -e "$site_file_path" ] || ! diff "$site_file_path" "$site_file_tmp_path" > /dev/null;
 		then
 			mv "$site_file_tmp_path" "$site_file_path"
