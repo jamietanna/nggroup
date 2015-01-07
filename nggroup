@@ -5,16 +5,16 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . "$DIR/config"
 
 usage () {
-	&>2 echo "nggroup usage:"
-		&>2 echo -e "\t\`nggroup site(add|del) <sitename>\`"
-		&>2 echo -e "\t\`nggroup sitemod <sitename> (+|-)<user>\`"
-		&>2 echo -e "\t\`nggroup sitemod <sitename> (+|-)@<group>\`"
-		&>2 echo -e "\t\`nggroup group(add|del) <groupname>\`"
-		&>2 echo -e "\t\`nggroup groupmod <groupname> (+|-)<user>\`"
-		&>2 echo -e "\t\`nggroup useradd <username> <password> <email_address> <full_name>\`"
-		&>2 echo -e "\t\`nggroup userdel <username>\`"
-		&>2 echo -e "\t\`nggroup generate\`"
-		&>2 echo    "For examples of usage, please see README.md"
+	 >&2 echo "nggroup usage:"
+		 >&2 echo -e "\t\`nggroup site(add|del) <sitename>\`"
+		 >&2 echo -e "\t\`nggroup sitemod <sitename> (+|-)<user>\`"
+		 >&2 echo -e "\t\`nggroup sitemod <sitename> (+|-)@<group>\`"
+		 >&2 echo -e "\t\`nggroup group(add|del) <groupname>\`"
+		 >&2 echo -e "\t\`nggroup groupmod <groupname> (+|-)<user>\`"
+		 >&2 echo -e "\t\`nggroup useradd <username> <password> <email_address> <full_name>\`"
+		 >&2 echo -e "\t\`nggroup userdel <username>\`"
+		 >&2 echo -e "\t\`nggroup generate\`"
+		 >&2 echo    "For examples of usage, please see README.md"
 	exit 1
 }
 
