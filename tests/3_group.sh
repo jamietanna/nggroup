@@ -22,8 +22,8 @@ $CMD sitemod testsite +testuser4
 $CMD sitemod testsite +testuser5
 $CMD generate
 
-group1_file=$(get_group_rules_path testgroup1)
-group2_file=$(get_group_rules_path testgroup2)
+group1_file=$(get_group_rule_path testgroup1)
+group2_file=$(get_group_rule_path testgroup2)
 
 [ $(wc -l $group1_file | cut -f1 -d" ") -eq 2 ]
 grep "^testuser1$" $group1_file > /dev/null

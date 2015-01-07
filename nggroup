@@ -76,7 +76,7 @@ group () {
 	isset "$2" "No group supplied" || usage
 
 	local group_file
-	group_file=$(get_group_rules_path "$2")
+	group_file=$(get_group_rule_path "$2")
 	case $1 in
 	groupadd )
 		[ -e "$group_file" ] && die "Group already exists."
@@ -102,8 +102,7 @@ del_funct () {
 	then
 		is_group=true
 		context="$(echo $1 | cut -c 2-)"
-		# TODO s/rules/rule
-		context_file=$(get_group_rules_path $context)
+		context_file=$(get_group_rule_path $context)
 	else
 		is_group=false
 		context="$(echo $1 | cut -c 1-)"
@@ -122,7 +121,7 @@ del_funct () {
 
 	local context_format_regex="^$context_regex_search\$"
 
-	for file_to_remove_from in $(grep -lR $group_format_regex "$(get_group_rules_path '*')" "$(get_site_rule_path '*')" 2> /dev/null);
+	for file_to_remove_from in $(grep -lR $group_format_regex "$(get_group_rule_path '*')" "$(get_site_rule_path '*')" 2> /dev/null);
 	do
 		sed -i "/$group_format_regex/d" "$file_to_remove_from"
 	done
@@ -163,7 +162,7 @@ mod_funct () {
 
 	if $is_group;
 	then
-		context_file=$(get_group_rules_path $context)
+		context_file=$(get_group_rule_path $context)
 		context_insert=$(get_group_rule_entry $context)
 	else
 		context_file=$(get_user_rule_path $context)
@@ -263,7 +262,7 @@ generate_sites () {
 
 			# remove the @ sign from the group
 			local group_name=$(echo $group | cut -c 2-)
-			local group_file=$(get_group_rules_path "$group_name")
+			local group_file=$(get_group_rule_path "$group_name")
 			local member_list=$(cat "$group_file")
 
 			for member in $member_list;
