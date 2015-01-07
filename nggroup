@@ -4,7 +4,23 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 . "$DIR/config"
 
+usage () {
+	&>2 echo "nggroup usage:"
+		&>2 echo -e "\t\`nggroup site(add|del) <sitename>\`"
+		&>2 echo -e "\t\`nggroup sitemod <sitename> (+|-)<user>\`"
+		&>2 echo -e "\t\`nggroup sitemod <sitename> (+|-)@<group>\`"
+		&>2 echo -e "\t\`nggroup group(add|del) <groupname>\`"
+		&>2 echo -e "\t\`nggroup groupmod <groupname> (+|-)<user>\`"
+		&>2 echo -e "\t\`nggroup useradd <username> <password> <email_address> <full_name>\`"
+		&>2 echo -e "\t\`nggroup userdel <username>\`"
+		&>2 echo -e "\t\`nggroup generate\`"
+		&>2 echo    "For examples of usage, please see README.md"
+	exit 1
+}
+
 site () {
+	isset "$2" "No site supplied" || usage
+
 	local site_file=$(get_site_rule_path "$2")
 	case "$1" in
 	siteadd )
@@ -16,12 +32,15 @@ site () {
 		rm "$site_file"
 		;;
 	sitemod )
+		isset "$3" "No modification supplied" || usage
 		mod_funct "$site_file" "$3" "Site"
 		;;
 	esac
 }
 
 user () {
+	isset "$2" "No user supplied" || usage
+
 	local rules_file
 	local generated_file
 	rules_file=$(get_user_rule_path "$2")
@@ -40,7 +59,7 @@ user () {
 		# username, password, email, name
 		if $any_errors;
 		then
-			die "Please fix the above errors"
+			usage
 		else
 			password=$(htpasswd -nb "$2" "$3" | cut -f2 -d:)
 			csv "$2" "$password" "$4" "$5" > "$rules_file"
@@ -54,9 +73,10 @@ user () {
 }
 
 group () {
+	isset "$2" "No group supplied" || usage
+
 	local group_file
 	group_file=$(get_group_rules_path "$2")
-
 	case $1 in
 	groupadd )
 		[ -e "$group_file" ] && die "Group already exists."
@@ -67,6 +87,7 @@ group () {
 		;;
 
 	groupmod )
+		isset "$3" "No modification supplied" || usage
 		mod_funct "$group_file" "$3" "Group"
 		;;
 	esac
@@ -180,9 +201,12 @@ generate () {
 	sites )
 		generate_sites
 		;;
-	* )
+	"" )
 		generate "users"
 		generate "sites"
+		;;
+	* )
+		usage
 		;;
 	esac
 }
@@ -304,5 +328,7 @@ case $1 in
 	generate* )
 		generate "$2"
 		;;
-
+	usage | * )
+		usage
+		;;
 esac

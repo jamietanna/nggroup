@@ -73,42 +73,30 @@ nggroup groupdel testgroup
 
 ### Full Command Listing
 
-`nggroup siteadd <sitename>` - add a new site
+To see a less verbose listing, please run `nggroup usage`.
 
-`nggroup sitedel <sitename>` - remove the  site
-
-`nggroup sitemod <sitename> +<user>` - add user to site
-
-`nggroup sitemod <sitename> -<user>` - remove user from site
-
-`nggroup sitemod <sitename> +@<group>` - add group to site
-
-`nggroup sitemod <sitename> -@<group>` - remove group from site
-
-
-`nggroup groupadd <groupname>` - add a new group
-
-`nggroup groupdel <groupname>` - remove the group
-
-`nggroup groupmod <groupname> +<user>` - add user to group
-
-`nggroup groupmod <groupname> -<user>` - remove user from group
-
-
-`nggroup useradd <username> <password> <email_address> <full_name>` - add a new user
-
-`nggroup userdel <username>` - remove a user
-
-
-`nggroup generate` - generate all user, site and group files
-
+| Command                                                             | Result                                  |
+| ------------------------------------------------------------------- | --------------------------------------- |
+| `nggroup siteadd <sitename>`                                        | add a new site                          |
+| `nggroup sitedel <sitename>`                                        | remove the  site                        |
+| `nggroup sitemod <sitename> +<user>`                                | add user to site                        |
+| `nggroup sitemod <sitename> -<user>`                                | remove user from site                   |
+| `nggroup sitemod <sitename> +@<group>`                              | add group to site                       |
+| `nggroup sitemod <sitename> -@<group>`                              | remove group from site                  |
+| `nggroup groupadd <groupname>`                                      | add a new group                         |
+| `nggroup groupdel <groupname>`                                      | remove the group                        |
+| `nggroup groupmod <groupname> +<user>`                              | add user to group                       |
+| `nggroup groupmod <groupname> -<user>`                              | remove user from group                  |
+| `nggroup useradd <username> <password> <email_address> <full_name>` | add a new user                          |
+| `nggroup userdel <username>`                                        | remove a user                           |
+| `nggroup generate`                                                  | generate all user, site and group files |
 
 Note that when removing performing `(user|group)del` you will remove all references to it.
 
+Remember to quote names when adding users - i.e. "Jamie Tanna", otherwise only the first name will be used.
+
 ## Known Issues
 
-- No input validation
-- case statements don't have a default case
 - if `groupadd a`, then `groupmod <!a> +@a`, will get error; need to generate first
 - if try to generate when i.e. no sites exist, exits as error
 
