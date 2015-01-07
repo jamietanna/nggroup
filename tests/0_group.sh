@@ -2,7 +2,7 @@
 
 . $(dirname $0)/testing_environ
 
-testgroup_path=$(get_group_rules_path testgroup)
+testgroup_path=$(get_group_rule_path testgroup)
 
 $CMD groupadd testgroup
 [ -e $testgroup_path ]
