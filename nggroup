@@ -41,10 +41,7 @@ site () {
 user () {
 	isset "$2" "No user supplied" || usage
 
-	local rules_file
-	local generated_file
-	rules_file=$(get_user_rule_path "$2")
-	generated_file=$(get_user_complete_path "$2")
+	local rules_file=$(get_user_rule_path "$2")
 
 	case $1 in
 	useradd )
@@ -56,7 +53,6 @@ user () {
 		isset "$4" "Email is blank" || any_errors=true
 		isset "$5" "Name is blank" || any_errors=true
 
-		# username, password, email, name
 		if $any_errors;
 		then
 			usage
@@ -93,43 +89,42 @@ group () {
 	esac
 }
 
+# a shared function for performing (user|group)mod
+#  note that context means user/group
 del_funct () {
 	local is_group
 	local context
 	local context_file
+	local context_regex_search
 
 	if [ "$(echo $1 | cut -c 1)" == "@" ];
 	then
 		is_group=true
 		context="$(echo $1 | cut -c 2-)"
 		context_file=$(get_group_rule_path $context)
+		context_regex_search=$(get_group_rule_entry $context)
 	else
 		is_group=false
 		context="$(echo $1 | cut -c 1-)"
 		context_file=$(get_user_rule_path $context)
-	fi
-
-	[ ! -e "$context_file" ] && die "$2 ($context_file) does not exist"
-
-	local context_regex_search
-	if $is_group;
-	then
-		context_regex_search=$(get_group_rule_entry $context)
-	else
 		context_regex_search=$(get_user_rule_entry $context)
 	fi
-
 	local context_format_regex="^$context_regex_search\$"
 
+	[ ! -e "$context_file" ] && die "$2 does not exist"
+
+	# remove traces of the user/group
 	for file_to_remove_from in $(grep -lR $group_format_regex "$(get_group_rule_path '*')" "$(get_site_rule_path '*')" 2> /dev/null);
 	do
 		sed -i "/$group_format_regex/d" "$file_to_remove_from"
 	done
 
+	# make sure to actually delete the user/group
 	rm $context_file
 }
 
 # a shared function for performing (site|group)mod
+#  note that context means site/group
 mod_funct () {
 	local is_group
 	local context
@@ -150,6 +145,7 @@ mod_funct () {
 		do
 			echo $(basename $user_path) >> "$1"
 		done
+		# don't bother any longer - we've got all the users now
 		return
 	fi
 
