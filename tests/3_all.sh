@@ -15,8 +15,8 @@ $CMD generate
 
 site_file=$(get_site_rule_path "testsite")
 
-grep "^testuser1" $site_file > /dev/null
-grep "^testuser2" $site_file > /dev/null
-grep "^testuser3" $site_file > /dev/null
-grep "^testuser4" $site_file > /dev/null
-grep "^testuser5" $site_file > /dev/null
+grep "^testuser1$" $site_file > /dev/null
+grep "^testuser2$" $site_file > /dev/null
+grep "^testuser3$" $site_file > /dev/null
+grep "^testuser4$" $site_file > /dev/null
+grep "^testuser5$" $site_file > /dev/null

@@ -107,7 +107,6 @@ Note that when removing performing `(user|group)del` you will remove all referen
 
 ## Known Issues
 
-- not all greps are necessarily strict - can cause outliers
 - No input validation
 - case statements don't have a default case
 - if `groupadd a`, then `groupmod <!a> +@a`, will get error; need to generate first
