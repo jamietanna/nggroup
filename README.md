@@ -107,8 +107,6 @@ Note that when removing performing `(user|group)del` you will remove all referen
 
 ## Known Issues
 
-- **insecure**
-  - keeping password on command line
 - not all greps are necessarily strict - can cause outliers
 - No input validation
 - case statements don't have a default case
@@ -127,8 +125,10 @@ The following features are subject to change, but will most probably be added as
   - [https://github.com/sstephenson/bats](https://github.com/sstephenson/bats)
   - output how many tests done/left
 - autocomplete
-- generate random passwords
-  - utilise `/usr/share/dict/words`
+- passwords
+  - if passwd = "-" ; read interactively
+  - generate random passwords
+    - utilise `/usr/share/dict/words`
 - cleanup
   - remove trailing spaces
     sed -i 's/[ \t]*$//' $(find . -path '*/.git' -prune -o -type f -print)
