@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
 
-. $(dirname $0)/testing_environ
+. "$(dirname "$0")"/testing_environ
 
-testuser_path=$(get_user_rule_path testuser)
+testuser_path="$(get_user_rule_path testuser)"
 
 $CMD useradd testuser password test@localhost "Test User"
-# TODO: have this in global vars
 [ -e "$testuser_path" ]
 
-testuser_file="$(cat $testuser_path)"
+testuser_file="$(cat "$testuser_path")"
 only_delims="${testuser_file//[^,]}"
-p1=$(echo $testuser_file | cut -f1 -d,)
-p2=$(echo $testuser_file | cut -f2 -d,)
-p3=$(echo $testuser_file | cut -f3 -d,)
-p4=$(echo $testuser_file | cut -f4 -d,)
+p1=$(echo "$testuser_file" | cut -f1 -d,)
+p2=$(echo "$testuser_file" | cut -f2 -d,)
+p3=$(echo "$testuser_file" | cut -f3 -d,)
+p4=$(echo "$testuser_file" | cut -f4 -d,)
 
 # three delims, four fields
 [ -n "$p1" ]

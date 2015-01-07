@@ -21,7 +21,7 @@ usage () {
 site () {
 	isset "$2" "No site supplied" || usage
 
-	local site_file=$(get_site_rule_path "$2")
+	local site_file="$(get_site_rule_path "$2")"
 	case "$1" in
 	siteadd )
 		[ -e "$site_file" ] && die "Site already exists."
@@ -41,7 +41,7 @@ site () {
 user () {
 	isset "$2" "No user supplied" || usage
 
-	local rules_file=$(get_user_rule_path "$2")
+	local rules_file="$(get_user_rule_path "$2")"
 
 	case $1 in
 	useradd )
@@ -97,30 +97,30 @@ del_funct () {
 	local context_file
 	local context_regex_search
 
-	if [ "$(echo $1 | cut -c 1)" == "@" ];
+	if [ "$(echo "$1" | cut -c 1)" == "@" ];
 	then
 		is_group=true
-		context="$(echo $1 | cut -c 2-)"
-		context_file=$(get_group_rule_path $context)
-		context_regex_search=$(get_group_rule_entry $context)
+		context="$(echo "$1" | cut -c 2-)"
+		context_file="$(get_group_rule_path "$context")"
+		context_regex_search="$(get_group_rule_entry "$context")"
 	else
 		is_group=false
-		context="$(echo $1 | cut -c 1-)"
-		context_file=$(get_user_rule_path $context)
-		context_regex_search=$(get_user_rule_entry $context)
+		context="$(echo "$1" | cut -c 1-)"
+		context_file="$(get_user_rule_path "$context")"
+		context_regex_search="$(get_user_rule_entry "$context")"
 	fi
 	local context_format_regex="^$context_regex_search\$"
 
 	[ ! -e "$context_file" ] && die "$2 does not exist"
 
 	# remove traces of the user/group
-	for file_to_remove_from in $(grep -lR $group_format_regex "$(get_group_rule_path '*')" "$(get_site_rule_path '*')" 2> /dev/null);
+	for file_to_remove_from in $(grep -lR "$context_format_regex" "$(get_group_rule_path '*')" "$(get_site_rule_path '*')" 2> /dev/null);
 	do
 		sed -i "/$group_format_regex/d" "$file_to_remove_from"
 	done
 
 	# make sure to actually delete the user/group
-	rm $context_file
+	rm "$context_file"
 }
 
 # a shared function for performing (site|group)mod
@@ -130,26 +130,26 @@ mod_funct () {
 	local context
 	local context_friendly=$3
 
-	if [ "$(echo $2 | cut -c 2)" == "@" ];
+	if [ "$(echo "$2" | cut -c 2)" == "@" ];
 	then
 		is_group=true
-		context="$(echo $2 | cut -c 3-)"
+		context="$(echo "$2" | cut -c 3-)"
 	else
 		is_group=false
-		context="$(echo $2 | cut -c 2-)"
+		context="$(echo "$2" | cut -c 2-)"
 	fi
 
 	if $is_group && [ "$context" == "all" ];
 	then
-		for user_path in $(ls $USER_DIR/*);
+		for user_path in $USER_DIR/*;
 		do
-			echo $(basename $user_path) >> "$1"
+			basename "$user_path" >> "$1"
 		done
 		# don't bother any longer - we've got all the users now
 		return
 	fi
 
-	[ ! -e "$1" ] && die $(printf "%s does not exist\n" "$3")
+	[ ! -e "$1" ] && die "$(printf "%s does not exist\n" "$3")"
 
 	local context_dir_format
 	local context_rule_format
@@ -158,14 +158,14 @@ mod_funct () {
 
 	if $is_group;
 	then
-		context_file=$(get_group_rule_path $context)
-		context_insert=$(get_group_rule_entry $context)
+		context_file="$(get_group_rule_path "$context")"
+		context_insert="$(get_group_rule_entry "$context")"
 	else
-		context_file=$(get_user_rule_path $context)
-		context_insert=$(get_user_rule_entry $context)
+		context_file="$(get_user_rule_path "$context")"
+		context_insert="$(get_user_rule_entry "$context")"
 	fi
 
-	[ ! -e "$context_file" ] && die $(printf "%s does not exist.\n" "$context_friendly")
+	[ ! -e "$context_file" ] && die "$(printf "%s does not exist.\n" "$context_friendly")"
 
 	local context_in_file=true
 	grep "^$context_insert$" "$1" > /dev/null || context_in_file=false
@@ -174,7 +174,7 @@ mod_funct () {
 	then
 		if $context_in_file;
 		then
-			die $(printf "%s is already part of the group.\n" $context_friendly)
+			die "$(printf "%s is already part of the group.\n" "$context_friendly")"
 		else
 			echo "$context_insert" >> "$1"
 		fi
@@ -183,7 +183,7 @@ mod_funct () {
 		then
 			sed -i "/^$context_insert$/d" "$1"
 		else
-			die $(printf "%s does not exist in the group.\n" $context_friendly)
+			die "$(printf "%s does not exist in the group.\n" "$context_friendly")"
 		fi
 	fi
 }
@@ -209,10 +209,10 @@ generate () {
 generate_users () {
 	for user_rule_file in $(get_user_rule_path "*");
 	do
-		username=$(cat $user_rule_file | cut -f1 -d,)
+		username=$(cut -f1 -d, < "$user_rule_file")
 		user_out_file=$(get_user_complete_path "$username")
-		user_password=$(cat $user_rule_file | cut -f2 -d,)
-		echo "$username:$user_password" > $user_out_file
+		user_password=$(cut -f2 -d, < "$user_rule_file")
+		echo "$username:$user_password" > "$user_out_file"
 	done
 }
 
@@ -225,9 +225,9 @@ generate_sites () {
 
 		# grab out the nice name from the format string that is
 		#  created from `get_site_rule_path`
-		site_name=$(echo "$rule_file"  | sed 's/.*\.\(.*\)\..*/\1/g')
-		site_file_path=$(get_site_complete_path "$site_name")
-		site_file_tmp_path=$site_file_path.tmp
+		site_name="$(echo "$rule_file"  | sed 's/.*\.\(.*\)\..*/\1/g')"
+		site_file_path="$(get_site_complete_path "$site_name")"
+		site_file_tmp_path="$site_file_path.tmp"
 
 		# truncate the temporary file
 		#  optimisation via http://stackoverflow.com/a/13576390
@@ -257,13 +257,13 @@ generate_sites () {
 			[ -z "$group" ] && break
 
 			# remove the @ sign from the group
-			local group_name=$(echo $group | cut -c 2-)
+			local group_name="$(echo "$group" | cut -c 2-)"
 			local group_file=$(get_group_rule_path "$group_name")
 			local member_list=$(cat "$group_file")
 
 			for member in $member_list;
 			do
-				if [ "$(echo $member | cut -c 1)" == "@" ];
+				if [ "$(echo "$member" | cut -c 1)" == "@" ];
 				then
 					# make sure we don't keep re-expanding - infinite recursion
 					if [[ ! "$groups_expanded" =~ "$member " ]];

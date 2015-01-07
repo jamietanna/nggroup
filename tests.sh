@@ -8,24 +8,24 @@ WORKING_DIR=$DIR/testing_directory
 TESTS_DIR=$DIR/tests
 
 # Clean up first - in case the script didn't successfully exit
-rm -rf $WORKING_DIR
+rm -rf "$WORKING_DIR"
 
 # Then set up our new environment and go into it
-mkdir -p $WORKING_DIR
-cd $WORKING_DIR
+mkdir -p "$WORKING_DIR"
+cd "$WORKING_DIR"
 
 success () {
-	echo -e "\033[92m$@\033[0m"
+	echo -e "\033[92m$*\033[0m"
 }
 
 failure () {
-	>&2 echo -e "\033[91m$@\033[0m"
+	>&2 echo -e "\033[91m$*\033[0m"
 }
 
 cleanup () {
 	failure "**FAIL"
-	cd $DIR
-	rm -rf $WORKING_DIR
+	cd "$DIR"
+	rm -rf "$WORKING_DIR"
 }
 
 trap 'cleanup; exit 1' ERR
@@ -42,7 +42,9 @@ done
 
 ## </Tests>
 
-# Clean up here if we get this far
-rm -rf $WORKING_DIR
+# Leave our test dir
+cd "$DIR"
+# and then clean up
+rm -rf "$WORKING_DIR"
 
 success "**All tests passed"
