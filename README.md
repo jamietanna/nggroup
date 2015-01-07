@@ -97,7 +97,7 @@ Remember to quote names when adding users - i.e. "Jamie Tanna", otherwise only t
 
 ## Known Issues
 
-- if try to generate when i.e. no sites exist, exits as error
+- None I have found - if you find one, please create an Issue on Github.
 
 ## Future Features (?)
 

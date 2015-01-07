@@ -45,7 +45,7 @@ user () {
 
 	case $1 in
 	useradd )
-		[ -e "$rules_file" ] && die "user already exists."
+		[ -e "$rules_file" ] && die "User already exists."
 
 		any_errors=false
 		isset "$2" "Username is blank" || any_errors=true
@@ -189,6 +189,23 @@ mod_funct () {
 }
 
 generate () {
+	# first make sure we have files to work with
+	local are_files=false
+	# makes sure that these /can/ glob
+	for file in $(get_user_rule_path "*") $(get_group_rule_path "*") $(get_site_rule_path "*");
+	do
+		if [ -f "$file" ];
+		then
+			are_files=true
+			break
+		fi
+	done
+
+	if ! $are_files;
+	then
+		die "No files to generate with"
+	fi
+
 	case "$1" in
 	users )
 		generate_users
