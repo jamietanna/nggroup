@@ -14,7 +14,7 @@ $CMD useradd testuser password test@localhost "Test User"
 [ "$(num_entries $testsite_path)" == "0" ]
 $CMD sitemod testsite +@testgroup > /dev/null
 [ "$(num_entries $testsite_path)" == "1" ]
-grep "@testgroup" "$testsite_path" > /dev/null
+grep "^@testgroup$" "$testsite_path" > /dev/null
 
 # can't add twice
 ! $CMD sitemod testsite +@testgroup 2> /dev/null
@@ -22,7 +22,7 @@ grep "@testgroup" "$testsite_path" > /dev/null
 
 # can delete
 $CMD sitemod testsite -@testgroup
-! grep testgroup "$testsite_path"  2> /dev/null
+! grep "^testgroup$" "$testsite_path"  2> /dev/null
 
 # can't re delete
 ! $CMD sitemod testsite -@testgroup 2> /dev/null
@@ -39,5 +39,5 @@ $CMD sitemod testsite -@testgroup
 
 
 $CMD sitemod testsite2 +testuser
-grep "testuser" "$testsite2_path" > /dev/null
-! grep "@testuser" "$testsite2_path" > /dev/null
+grep "^testuser$" "$testsite2_path" > /dev/null
+! grep "^@testuser$" "$testsite2_path" > /dev/null
