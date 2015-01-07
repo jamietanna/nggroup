@@ -9,7 +9,7 @@ debug () {
 }
 
 error () {
-	echo "Error: $@" >&2
+	echo -e "\033[91mError: $@\033[0m" >&2
 }
 
 die () {
