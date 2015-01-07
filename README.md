@@ -97,7 +97,6 @@ Remember to quote names when adding users - i.e. "Jamie Tanna", otherwise only t
 
 ## Known Issues
 
-- if `groupadd a`, then `groupmod <!a> +@a`, will get error; need to generate first
 - if try to generate when i.e. no sites exist, exits as error
 
 ## Future Features (?)
