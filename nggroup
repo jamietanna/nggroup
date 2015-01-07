@@ -47,21 +47,9 @@ user () {
 		fi
 		;;
 
-	# TODO: make a global?
 	userdel )
-		[ ! -e "$rules_file" ] && die "User does not exist."
-
-		user_format_regex="^$(get_user_rule_entry \"$2\")$"
-
-		for file_to_remove_from in $(grep -lR "$user_format_regex" "$GROUP_DIR" "$SITES_DIR");
-		do
-			sed -i "/$user_format_regex/d" "$file_to_remove_from"
-		done
-
-		# delete, whether it exists or not
-		rm -f "$generated_file"
-
-		rm "$rules_file"
+		del_funct "$2" "User"
+		;;
 	esac
 }
 
@@ -75,20 +63,50 @@ group () {
 		touch "$group_file"
 		;;
 	groupdel )
-		[ ! -e "$group_file" ] && die "Group does not exist."
-		group_format_regex="^$(get_group_rule_entry \"$2\")$"
-
-		for file_to_remove_from in $(grep -lR $group_format_regex "$GROUP_DIR" "$SITES_DIR");
-		do
-			sed -i "/$group_format_regex/d" "$file_to_remove_from"
-		done
-
-		rm "$group_file"
+		del_funct "@$2" "Group"
 		;;
+
 	groupmod )
 		mod_funct "$group_file" "$3" "Group"
 		;;
 	esac
+}
+
+del_funct () {
+	local is_group
+	local context
+	local context_file
+
+	if [ "$(echo $1 | cut -c 1)" == "@" ];
+	then
+		is_group=true
+		context="$(echo $1 | cut -c 2-)"
+		# TODO s/rules/rule
+		context_file=$(get_group_rules_path $context)
+	else
+		is_group=false
+		context="$(echo $1 | cut -c 1-)"
+		context_file=$(get_user_rule_path $context)
+	fi
+
+	[ ! -e "$context_file" ] && die "$2 ($context_file) does not exist"
+
+	local context_regex_search
+	if $is_group;
+	then
+		context_regex_search=$(get_group_rule_entry $context)
+	else
+		context_regex_search=$(get_user_rule_entry $context)
+	fi
+
+	local context_format_regex="^$context_regex_search\$"
+
+	for file_to_remove_from in $(grep -lR $group_format_regex "$(get_group_rules_path '*')" "$(get_site_rule_path '*')" 2> /dev/null);
+	do
+		sed -i "/$group_format_regex/d" "$file_to_remove_from"
+	done
+
+	rm $context_file
 }
 
 # a shared function for performing (site|group)mod
