@@ -30,7 +30,7 @@ Note that the working directory will be the directory that `nggroup` resides in.
 ### Running in Production
 
 In order to install `nggroup`, you will need to:
-- Set a global environment variable, `$_IN_PRODUCTION` to i.e. your hostname (as long as it is non-null). This is best set in the `/etc/environment` file. Remember to `source /etc/environment` to ensure that the variable is set. 
+- Set a global environment variable, `$_IN_PRODUCTION` to i.e. your hostname (as long as it is non-null). This is best set in the `/etc/environment` file. Remember to `source /etc/environment` to ensure that the variable is set.
 - Copy this repository to somewhere in the `$PATH`, ensuring that only `nggroup` has execute rights.
 - Have `sudo` rights
 

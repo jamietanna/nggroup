@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-. $(dirname $0)/testing_environ
+. "$(dirname "$0")"/testing_environ
 
-testsite_path=$(get_site_rule_path testsite)
-testsite2_path=$(get_site_rule_path testsite2)
+testsite_path="$(get_site_rule_path testsite)"
+testsite2_path="$(get_site_rule_path testsite2)"
 
 $CMD siteadd testsite
 $CMD siteadd testsite2
@@ -11,14 +11,14 @@ $CMD groupadd testgroup
 $CMD useradd testuser password test@localhost "Test User"
 
 # can add
-[ "$(num_entries $testsite_path)" == "0" ]
+[ "$(num_entries "$testsite_path")" == "0" ]
 $CMD sitemod testsite +@testgroup > /dev/null
-[ "$(num_entries $testsite_path)" == "1" ]
+[ "$(num_entries "$testsite_path")" == "1" ]
 grep "^@testgroup$" "$testsite_path" > /dev/null
 
 # can't add twice
 ! $CMD sitemod testsite +@testgroup 2> /dev/null
-[ "$(num_entries $testsite_path)" == "1" ]
+[ "$(num_entries "$testsite_path")" == "1" ]
 
 # can delete
 $CMD sitemod testsite -@testgroup

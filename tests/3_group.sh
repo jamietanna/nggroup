@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. $(dirname $0)/testing_environ
+. "$(dirname "$0")"/testing_environ
 
 $CMD useradd testuser1 pwd test1@localhost "Test User 1"
 $CMD useradd testuser2 pwd test2@localhost "Test User 2"
@@ -22,24 +22,24 @@ $CMD sitemod testsite +testuser4
 $CMD sitemod testsite +testuser5
 $CMD generate
 
-group1_file=$(get_group_rule_path testgroup1)
-group2_file=$(get_group_rule_path testgroup2)
+group1_file="$(get_group_rule_path testgroup1)"
+group2_file="$(get_group_rule_path testgroup2)"
 
-[ $(wc -l $group1_file | cut -f1 -d" ") -eq 2 ]
-grep "^testuser1$" $group1_file > /dev/null
-grep "^testuser2$" $group1_file > /dev/null
+[ $(wc -l "$group1_file" | cut -f1 -d" ") -eq 2 ]
+grep "^testuser1$" "$group1_file" > /dev/null
+grep "^testuser2$" "$group1_file" > /dev/null
 
-[ $(wc -l $group2_file | cut -f1 -d" ") -eq 2 ]
-grep "^@testgroup1$" $group2_file > /dev/null
-grep "^testuser3$" $group2_file > /dev/null
+[ $(wc -l "$group2_file" | cut -f1 -d" ") -eq 2 ]
+grep "^@testgroup1$" "$group2_file" > /dev/null
+grep "^testuser3$" "$group2_file" > /dev/null
 
-site_file=$(get_site_complete_path "testsite")
+site_file="$(get_site_complete_path "testsite")"
 
-grep "^testuser1:" $site_file > /dev/null
-grep "^testuser2:" $site_file > /dev/null
-grep "^testuser3:" $site_file > /dev/null
-grep "^testuser4:" $site_file > /dev/null
-grep "^testuser5:" $site_file > /dev/null
+grep "^testuser1:" "$site_file" > /dev/null
+grep "^testuser2:" "$site_file" > /dev/null
+grep "^testuser3:" "$site_file" > /dev/null
+grep "^testuser4:" "$site_file" > /dev/null
+grep "^testuser5:" "$site_file" > /dev/null
 
 
 # see if we get a recursive loop (2 groups)
@@ -91,7 +91,7 @@ $CMD generate
 #		testuser3
 #	testuser4
 #	testuser5
-[ "$(num_entries $(get_site_complete_path testsite))" == "5" ]
+[ "$(num_entries "$(get_site_complete_path testsite)")" == "5" ]
 
 # testsite2 contains:
 #	@testgroup3
@@ -99,7 +99,7 @@ $CMD generate
 #			@testgroup3
 #				*** STOP
 #	testuser6
-[ "$(num_entries $(get_site_complete_path testsite2))" == "1" ]
+[ "$(num_entries "$(get_site_complete_path testsite2)")" == "1" ]
 
 # testsite3 contains:
 #	@testgroup5
@@ -113,4 +113,4 @@ $CMD generate
 #		@testgroup6
 #	testuser7
 # NOTE: lots of recursion, but *SHOULD* only be one remaining user - testuser7
-[ "$(num_entries $(get_site_complete_path testsite3))" == "1" ]
+[ "$(num_entries "$(get_site_complete_path testsite3)")" == "1" ]

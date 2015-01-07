@@ -22,7 +22,7 @@ then
 fi
 
 # if we're not in production, use the current directory
-if [ -n "$_IN_PRODUCTION" ]; 
+if [ -n "$_IN_PRODUCTION" ];
 then
 	HTPASS_DIR=/etc/nginx/htpasswd
 else
