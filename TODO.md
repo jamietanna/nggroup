@@ -1,0 +1,18 @@
+# TODO
+
+- s/`nggroup $CMD`/`ng$CMD`
+	- i.e. `nggroup useradd` -> `nguseradd`
+- distribute via [setuptools](https://python-packaging-user-guide.readthedocs.org/en/latest/distributing.html#configuring-your-project)
+	- try to not require any dependencies (if possible)
+		- or if so, bundle them properly
+- abide by pep8
+- tests set up in Python
+- remove/make optional - user's name and email
+- Python2
+	- possibly Python3
+- make easily importable into other scripts
+	- i.e. web hooks etc
+- user permissions
+	- if run as `root`, or part of `%nggroup` it will run globally
+	- if run as a user, it will run in the user's home directory
+		- warns the calling script that they're running as a user
