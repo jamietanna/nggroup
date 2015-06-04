@@ -2,6 +2,8 @@
 
 import config
 
+import os
+
 
 class User:
 
@@ -11,10 +13,7 @@ class User:
         self.userEmail = userEmail
 
     def getUserRulePath(self):
-        return "%s/.%s.rules" % (
-            config.USER_DIR,
-            self.username
-            )
+        return GetUserRulePath(self.username)
 
     def saveUserRule(self):
         with open(self.getUserRulePath(), "wb+") as userRuleFile:
@@ -26,3 +25,25 @@ class User:
                     self.userEmail
                 ]
                 )
+
+
+def GetUserRulePath(username):
+    return "%s/.%s.rules" % (
+        config.USER_DIR,
+        username
+        )
+
+
+def PopulateUser(username):
+    userRulePath = GetUserRulePath(username)
+
+    if not os.path.exists(userRulePath):
+        return None
+
+    with open(userRulePath, "rb") as userRuleFile:
+        csvReader = config.getCSVReader(userRuleFile)
+        userData = []
+        for line in csvReader:
+            userData = line
+
+        return User(userData[0], userData[1], userData[2])
