@@ -3,3 +3,5 @@ groups/
 sites/
 users/
 personal_config
+
+*.pyc
