@@ -9,7 +9,7 @@ from user import User, PopulateUser
 
 class TestUserObject(unittest.TestCase):
 
-    def test_saveuserrule(self):
+    def test_saveUserRule(self):
         # Initialise our test data
         NUMBER_PARAMS = 3
         USERNAME = "jamietanna"
@@ -42,7 +42,7 @@ class TestUserObject(unittest.TestCase):
         os.remove(userRulePath)
         self.assertFalse(os.path.exists(userRulePath))
 
-    def test_populateuser(self):
+    def test_populateUser(self):
         USERNAME = "jamietanna"
         PASSWORDHASH = "*******"
         USEREMAIL = "jamie@jamietanna.co.uk"
