@@ -7,6 +7,8 @@
 		- or if so, bundle them properly
 - abide by pep8
 - tests set up in Python
+	- make use of `python2 -m unittest tests.$TEST_NAME`
+	- integrate in `mock`
 - remove/make optional - user's name and email
 - Python2
 	- possibly Python3
@@ -16,3 +18,5 @@
 	- if run as `root`, or part of `%nggroup` it will run globally
 	- if run as a user, it will run in the user's home directory
 		- warns the calling script that they're running as a user
+- don't  bother writing if no changes
+	- test via i.e. SHA256 checksum
