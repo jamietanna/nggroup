@@ -4,7 +4,7 @@ import unittest
 
 import config
 import os
-from user import User
+from user import User, PopulateUser
 
 
 class TestUserObject(unittest.TestCase):
@@ -39,6 +39,26 @@ class TestUserObject(unittest.TestCase):
                 self.assertEqual(USEREMAIL, line[2])
 
         # remove the file we're testing with
+        os.remove(userRulePath)
+        self.assertFalse(os.path.exists(userRulePath))
+
+    def test_populateuser(self):
+        USERNAME = "jamietanna"
+        PASSWORDHASH = "*******"
+        USEREMAIL = "jamie@jamietanna.co.uk"
+
+        # create our test object
+        user = User(USERNAME, PASSWORDHASH, USEREMAIL)
+        user.saveUserRule()
+
+        user2 = PopulateUser(USERNAME)
+        # TODO assert equal on getts
+        self.assertEqual(user.username, user2.username)
+        self.assertEqual(user.passwordHash, user2.passwordHash)
+        self.assertEqual(user.userEmail, user2.userEmail)
+
+        # remove the file we're testing with
+        userRulePath = user.getUserRulePath()
         os.remove(userRulePath)
         self.assertFalse(os.path.exists(userRulePath))
 
