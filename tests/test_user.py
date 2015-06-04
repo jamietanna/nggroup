@@ -4,7 +4,7 @@ import unittest
 
 import config
 import os
-from user import User, PopulateUser
+from user import User, PopulateUser, AddUser, GetUserRulePath
 
 
 class TestUserObject(unittest.TestCase):
@@ -17,11 +17,10 @@ class TestUserObject(unittest.TestCase):
         USEREMAIL = "jamie@jamietanna.co.uk"
 
         # create our test object
-        user = User(USERNAME, PASSWORDHASH, USEREMAIL)
+        AddUser(USERNAME, PASSWORDHASH, USEREMAIL)
 
         # test that we can save the file correctly
-        userRulePath = user.getUserRulePath()
-        user.saveUserRule()
+        userRulePath = GetUserRulePath(USERNAME)
         with open(userRulePath, "rb") as userRuleFile:
             csvReader = config.getCSVReader(userRuleFile)
 
@@ -48,8 +47,7 @@ class TestUserObject(unittest.TestCase):
         USEREMAIL = "jamie@jamietanna.co.uk"
 
         # create our test object
-        user = User(USERNAME, PASSWORDHASH, USEREMAIL)
-        user.saveUserRule()
+        user = AddUser(USERNAME, PASSWORDHASH, USEREMAIL)
 
         user2 = PopulateUser(USERNAME)
         # TODO assert equal on getts

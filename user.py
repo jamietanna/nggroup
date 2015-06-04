@@ -54,6 +54,12 @@ class User:
                 )
 
 
+def AddUser(username, passwordHash, userEmail):
+    user = User(username, passwordHash, userEmail)
+    user.saveUserRule()
+    return user
+
+
 def GetUserRulePath(username):
     return "%s/.%s.rules" % (
         config.USER_DIR,
