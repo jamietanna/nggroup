@@ -12,6 +12,33 @@ class User:
         self.passwordHash = passwordHash
         self.userEmail = userEmail
 
+    @property
+    def username(self):
+        """The User's unique username"""
+        return self._username
+
+    @username.setter
+    def username(self, value):
+        self._username = value
+
+    @property
+    def passwordHash(self):
+        """The User's password hash"""
+        return self._passwordHash
+
+    @passwordHash.setter
+    def passwordHash(self, value):
+        self._passwordHash = value
+
+    @property
+    def userEmail(self):
+        """The User's email"""
+        return self._userEmail
+
+    @userEmail.setter
+    def userEmail(self, value):
+        self._userEmail = value
+
     def getUserRulePath(self):
         return GetUserRulePath(self.username)
 

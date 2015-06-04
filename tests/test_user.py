@@ -42,6 +42,21 @@ class TestUserObject(unittest.TestCase):
         os.remove(userRulePath)
         self.assertFalse(os.path.exists(userRulePath))
 
+    def test_properties(self):
+        USERNAME = "jamietanna"
+        PASSWORDHASH = "*******"
+        USEREMAIL = "jamie@jamietanna.co.uk"
+
+        # create our test object
+        user = User(USERNAME, PASSWORDHASH, USEREMAIL)
+        self.assertEqual(USERNAME, user.username)
+        self.assertEqual(PASSWORDHASH, user.passwordHash)
+        self.assertEqual(USEREMAIL, user.userEmail)
+
+        NEW_USERNAME = "jvtanna"
+        user.username = NEW_USERNAME
+        self.assertEquals(NEW_USERNAME, user.username)
+
 
 if __name__ == "__main__":
     unittest.main()
