@@ -20,3 +20,4 @@
 		- warns the calling script that they're running as a user
 - don't  bother writing if no changes
 	- test via i.e. SHA256 checksum
+- have a global `generateCheck` function that checks if a `nggenerate` is needed
