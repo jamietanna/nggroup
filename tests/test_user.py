@@ -14,8 +14,24 @@ def RemoveRulesFile(username):
 
 class TestUserObject(unittest.TestCase):
 
+    def cleanUpTempFiles(self):
+        # wrap in a try-except in case it's the first run, and we don't have a
+        # Users array
+        try:
+            for user in self.users:
+                RemoveRulesFile(user.username)
+        except AttributeError:
+            pass
+
+    def tearDown(self):
+        self.cleanUpTempFiles()
+
     # TODO make this a `setUpClass` - therefore less work before each test run
     def setUp(self):
+        # make sure we clean up our temp files before we run the test, just in
+        # case we have some files left over from before
+        self.cleanUpTempFiles()
+
         users = []
         userDetails = []
 
