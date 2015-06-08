@@ -5,7 +5,7 @@ import unittest
 import config
 import os
 from user import User, PopulateUser, AddUser, GetUserRulePath, UserExists, DeleteUser
-from nggroup_exceptions import UserDoesNotExistError
+from nggroup_exceptions import UserAlreadyExistsError, UserDoesNotExistError
 
 
 class TestUserObject(unittest.TestCase):
@@ -138,6 +138,20 @@ class TestUserObject(unittest.TestCase):
         USERNAME = "thisisnotavalidusername"
         with self.assertRaises(UserDoesNotExistError):
             DeleteUser(USERNAME)
+
+    def test_addUserTwice(self):
+        USERNAME = self.users[0].username
+        PASSWORDHASH = self.users[0].passwordHash
+        USEREMAIL = self.users[0].passwordHash
+
+        # ensure we don't conflict with an existing user
+        DeleteUser(USERNAME)
+
+        user = AddUser(USERNAME, PASSWORDHASH, USEREMAIL)
+        with self.assertRaises(UserAlreadyExistsError):
+            user2 = AddUser(USERNAME, PASSWORDHASH, USEREMAIL)
+
+
 
 if __name__ == "__main__":
     unittest.main()
