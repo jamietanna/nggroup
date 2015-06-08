@@ -4,7 +4,12 @@ import unittest
 
 import config
 import os
-from user import User, PopulateUser, AddUser, GetUserRulePath
+from user import User, PopulateUser, AddUser, GetUserRulePath, UserExists
+
+
+def RemoveRulesFile(username):
+    if UserExists(username):
+        os.remove(GetUserRulePath(username))
 
 
 class TestUserObject(unittest.TestCase):
@@ -70,8 +75,7 @@ class TestUserObject(unittest.TestCase):
                     self.assertEqual(USEREMAIL, line[2])
 
             # remove the file we're testing with
-            os.remove(userRulePath)
-            self.assertFalse(os.path.exists(userRulePath))
+            RemoveRulesFile(USERNAME)
 
     def test_populateUser(self):
         for user in self.users:
@@ -89,9 +93,7 @@ class TestUserObject(unittest.TestCase):
             self.assertEqual(user.userEmail, user2.userEmail)
 
             # remove the file we're testing with
-            userRulePath = user.getUserRulePath()
-            os.remove(userRulePath)
-            self.assertFalse(os.path.exists(userRulePath))
+            RemoveRulesFile(USERNAME)
 
     def test_properties(self):
         USERNAME = self.users[0].username

@@ -54,6 +54,10 @@ class User:
                 )
 
 
+def UserExists(username):
+    return os.path.exists(GetUserRulePath(username))
+
+
 def AddUser(username, passwordHash, userEmail):
     user = User(username, passwordHash, userEmail)
     user.saveUserRule()
