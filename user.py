@@ -4,6 +4,8 @@ import config
 
 import os
 
+from nggroup_exceptions import UserAlreadyExistsError
+
 
 class User:
 
@@ -60,7 +62,7 @@ def UserExists(username):
 
 def AddUser(username, passwordHash, userEmail):
     if UserExists(username):
-        raise UserAlreadyExists(username)
+        raise UserAlreadyExistsError(username)
 
     user = User(username, passwordHash, userEmail)
     user.saveUserRule()
@@ -87,20 +89,3 @@ def PopulateUser(username):
             userData = line
 
         return User(userData[0], userData[1], userData[2])
-
-
-class AlreadyExistsError(Exception):
-
-    def __init__(self, typeOfError, whatAlreadyExists):
-        self.typeOfError = typeOfError
-        self.whatAlreadyExists = whatAlreadyExists
-        self.message = "The %s `%s` already exists." % (self.typeOfError, self.whatAlreadyExists)
-
-    def __str__(self):
-        return self.message
-
-class UserAlreadyExists(AlreadyExistsError):
-
-    def __init__(self, whatAlreadyExists):
-        super(UserAlreadyExists, self).__init__("user", whatAlreadyExists)
-        print self.message
