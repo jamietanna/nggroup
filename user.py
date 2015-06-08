@@ -44,6 +44,9 @@ class User:
     def getUserRulePath(self):
         return GetUserRulePath(self.username)
 
+    def getUserConfigPath(self):
+        return GetUserConfigPath(self.username)
+
     def saveUserRule(self):
         with open(self.getUserRulePath(), "wb+") as userRuleFile:
             ruleWriter = config.getCSVWriter(userRuleFile)
@@ -58,8 +61,25 @@ class User:
     def delete(self):
         if UserExists(self.username):
             os.remove(GetUserRulePath(self.username))
-        # TODO also remove generated file
+
+        if os.path.exists(GetUserConfigPath(self.username)):
+            os.remove(GetUserConfigPath(self.username))
+
         # TODO also remove any references in other generated files -- warn user before, which files/etc will be affected
+
+    def saveUserConfig(self):
+        with open(self.getUserConfigPath(), "wb+") as userConfigFile:
+            configWriter = config.getHtpasswdWriter(userConfigFile)
+            configWriter.writerow(
+                [
+                    self.username,
+                    self.passwordHash
+                ]
+                )
+
+    def generate(self):
+        self.saveUserRule()
+        self.saveUserConfig()
 
 
 def UserExists(username):
@@ -81,6 +101,12 @@ def DeleteUser(username):
     user = PopulateUser(username)
     user.delete()
     return user
+
+def GetUserConfigPath(username):
+    return "%s/%s" % (
+        config.USER_DIR,
+        username
+        )
 
 def GetUserRulePath(username):
     return "%s/.%s.rules" % (

@@ -151,7 +151,38 @@ class TestUserObject(unittest.TestCase):
         with self.assertRaises(UserAlreadyExistsError):
             user2 = AddUser(USERNAME, PASSWORDHASH, USEREMAIL)
 
+    def test_saveUserConfig(self):
 
+        # Initialise our test data
+        NUMBER_PARAMS = 2
+
+        # TODO abstract out this code into a separate function if possible
+        # i.e. by adding a wrapper that will run a function given the test data
+        for user in self.users:
+            USERNAME = user.username
+            PASSWORDHASH = user.passwordHash
+            USEREMAIL = user.userEmail
+
+            user.saveUserConfig()
+            userConfigPath = user.getUserConfigPath()
+            self.assertTrue(os.path.exists(userConfigPath))
+
+            with open(userConfigPath, "rb") as userConfigFile:
+                htpasswdReader = config.getHtpasswdReader(userConfigFile)
+
+                lineCount = 0
+                for line in htpasswdReader:
+                    lineCount += 1
+                    # we can only have one user per file
+                    self.assertEqual(lineCount, 1)
+
+                    # ensure that we have the correct number of params
+                    self.assertEqual(NUMBER_PARAMS, len(line))
+                    # and that they're the same that we passed in
+                    self.assertEqual(USERNAME, line[0])
+                    self.assertEqual(PASSWORDHASH, line[1])
+
+            DeleteUser(USERNAME)
 
 if __name__ == "__main__":
     unittest.main()
