@@ -4,33 +4,36 @@ import unittest
 
 import config
 import os
-from user import User, PopulateUser, AddUser, GetUserRulePath, UserExists
-
-
-def RemoveRulesFile(username):
-    if UserExists(username):
-        os.remove(GetUserRulePath(username))
+from user import User, PopulateUser, AddUser, GetUserRulePath, UserExists, DeleteUser
+from nggroup_exceptions import UserDoesNotExistError
 
 
 class TestUserObject(unittest.TestCase):
 
-    def cleanUpTempFiles(self):
+    def cleanUpWorkingDirectory(self):
         # wrap in a try-except in case it's the first run, and we don't have a
         # Users array
         try:
-            for user in self.users:
-                RemoveRulesFile(user.username)
+            users = self.users
         except AttributeError:
-            pass
+            return
+
+        # then loop through our Users, cleaning up as we go
+        for user in users:
+            try:
+                DeleteUser(user.username)
+            except UserDoesNotExistError:
+                # it doesn't matter if we can't delete a user that doesn't exist
+                continue
 
     def tearDown(self):
-        self.cleanUpTempFiles()
+        self.cleanUpWorkingDirectory()
 
     # TODO make this a `setUpClass` - therefore less work before each test run
     def setUp(self):
         # make sure we clean up our temp files before we run the test, just in
         # case we have some files left over from before
-        self.cleanUpTempFiles()
+        self.cleanUpWorkingDirectory()
 
         users = []
         userDetails = []
@@ -91,7 +94,7 @@ class TestUserObject(unittest.TestCase):
                     self.assertEqual(USEREMAIL, line[2])
 
             # remove the file we're testing with
-            RemoveRulesFile(USERNAME)
+            DeleteUser(USERNAME)
 
     def test_populateUser(self):
         for user in self.users:
@@ -100,7 +103,7 @@ class TestUserObject(unittest.TestCase):
             USEREMAIL = user.userEmail
 
             # make sure we don't have any conflicts with previously saved files
-            RemoveRulesFile(USERNAME)
+            DeleteUser(USERNAME)
 
             # create our test object
             user = AddUser(USERNAME, PASSWORDHASH, USEREMAIL)
@@ -126,6 +129,15 @@ class TestUserObject(unittest.TestCase):
         user.username = NEW_USERNAME
         self.assertEquals(NEW_USERNAME, user.username)
 
+    def test_deleteRealUser(self):
+        USERNAME = self.users[0].username
+        DeleteUser(USERNAME)
+        self.assertFalse(UserExists(USERNAME))
+
+    def test_deleteNonExistentUser(self):
+        USERNAME = "thisisnotavalidusername"
+        with self.assertRaises(UserDoesNotExistError):
+            DeleteUser(USERNAME)
 
 if __name__ == "__main__":
     unittest.main()

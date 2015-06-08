@@ -4,7 +4,7 @@ import config
 
 import os
 
-from nggroup_exceptions import UserAlreadyExistsError
+from nggroup_exceptions import UserAlreadyExistsError, UserDoesNotExistError
 
 
 class User:
@@ -55,6 +55,12 @@ class User:
                 ]
                 )
 
+    def delete(self):
+        if UserExists(self.username):
+            os.remove(GetUserRulePath(self.username))
+        # TODO also remove generated file
+        # TODO also remove any references in other generated files -- warn user before, which files/etc will be affected
+
 
 def UserExists(username):
     return os.path.exists(GetUserRulePath(username))
@@ -68,6 +74,13 @@ def AddUser(username, passwordHash, userEmail):
     user.saveUserRule()
     return user
 
+def DeleteUser(username):
+    if not UserExists(username):
+        raise UserDoesNotExistError(username)
+
+    user = PopulateUser(username)
+    user.delete()
+    return user
 
 def GetUserRulePath(username):
     return "%s/.%s.rules" % (
