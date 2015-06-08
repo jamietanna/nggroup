@@ -83,6 +83,9 @@ class TestUserObject(unittest.TestCase):
             PASSWORDHASH = user.passwordHash
             USEREMAIL = user.userEmail
 
+            # make sure we don't have any conflicts with previously saved files
+            RemoveRulesFile(USERNAME)
+
             # create our test object
             user = AddUser(USERNAME, PASSWORDHASH, USEREMAIL)
 
@@ -91,9 +94,6 @@ class TestUserObject(unittest.TestCase):
             self.assertEqual(user.username, user2.username)
             self.assertEqual(user.passwordHash, user2.passwordHash)
             self.assertEqual(user.userEmail, user2.userEmail)
-
-            # remove the file we're testing with
-            RemoveRulesFile(USERNAME)
 
     def test_properties(self):
         USERNAME = self.users[0].username
