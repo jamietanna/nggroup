@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-from nggroup_exceptions import UserAlreadyExistsInGroup
+from nggroup_exceptions import UserAlreadyExistsInGroup, UserDoesNotExistInGroupError
 
 
 class Group:
@@ -35,3 +35,9 @@ class Group:
             raise UserAlreadyExistsInGroup(user.username, self.groupName)
 
         self.userList[user.username] = user
+
+    def deleteUser(self, user):
+        if not self.isUserInGroup(user.username):
+            raise UserDoesNotExistInGroupError(user.username, self.groupName)
+
+        del self.userList[user.username]

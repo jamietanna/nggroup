@@ -5,7 +5,7 @@ import unittest
 from group import Group
 from user import User
 
-from nggroup_exceptions import UserAlreadyExistsInGroup
+from nggroup_exceptions import UserAlreadyExistsInGroup, UserDoesNotExistInGroupError
 
 
 class TestGroupObject(unittest.TestCase):
@@ -34,3 +34,25 @@ class TestGroupObject(unittest.TestCase):
         GROUP.addUser(USER)
         with self.assertRaises(UserAlreadyExistsInGroup):
             GROUP.addUser(USER)
+
+    def test_deleteUser(self):
+        GROUP = Group("TestGroup")
+        USERNAME = "testuser"
+        USER = User(USERNAME, "*****", "test@localhost")
+        GROUP.addUser(USER)
+
+        self.assertEqual(1, len(GROUP.userList))
+        self.assertTrue(GROUP.isUserInGroup(USERNAME))
+
+        GROUP.deleteUser(USER)
+        self.assertEqual(0, len(GROUP.userList))
+        self.assertFalse(GROUP.isUserInGroup(USERNAME))
+
+    def test_deleteNonExistentUser(self):
+        GROUP = Group("TestGroup")
+        USER = User("usernotpartofgroup", "*****", "test@localhost")
+
+        self.assertFalse(GROUP.isUserInGroup(USER.username))
+
+        with self.assertRaises(UserDoesNotExistInGroupError):
+            GROUP.deleteUser(USER)
