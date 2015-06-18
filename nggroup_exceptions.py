@@ -28,6 +28,12 @@ class UserAlreadyExistsError(AlreadyExistsError):
         super(UserAlreadyExistsError, self).__init__("user", whatAlreadyExists)
 
 
+class UserAlreadyExistsInGroup(AlreadyExistsError):
+
+    def __init__(self, whichUserAlreadyExists, whichGroupExistsIn):
+        super(AlreadyExistsError, self).__init__("user", whichUserAlreadyExists, "group", "whichGroupExistsIn")
+
+
 class DoesNotExistError(Exception):
 
     def __init__(self, typeOfWhatDoesNotExist, whatDoesNotExist, typeOfWhatDoesNotExistIn="", whatDoesNotExistIn=""):
