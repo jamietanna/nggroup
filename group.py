@@ -1,10 +1,13 @@
 #!/usr/bin/env python2
 
-from nggroup_exceptions import UserAlreadyExistsInGroup, UserDoesNotExistInGroupError
+import os
+import config
+from nggroup_exceptions import UserAlreadyExistsInGroup, GroupAlreadyExistsError, GroupDoesNotExistError, UserDoesNotExistInGroupError
+
+from user import PopulateUser
 
 
 class Group:
-
 
     def __init__(self, groupName):
         self.groupName = groupName
@@ -41,3 +44,81 @@ class Group:
             raise UserDoesNotExistInGroupError(user.username, self.groupName)
 
         del self.userList[user.username]
+
+    def getGroupRulePath(self):
+        return GetGroupRulePath(self.groupName)
+
+    def saveGroupRuleFile(self):
+        if not self.userList:
+            # we want to just create the file, making sure it's there, even if it's not a CSV
+            # http://stackoverflow.com/a/12654798
+            open(self.getGroupRulePath(), "wb+").close()
+            return
+
+        with open(self.getGroupRulePath(), "wb+") as groupRuleFile:
+            ruleWriter = config.getCSVWriter(groupRuleFile)
+            for user in self.userList:
+                ruleWriter.writerow([user])
+
+    def delete(self):
+        if GroupExists(self.groupName):
+            os.remove(GetGroupRulePath(self.groupName))
+
+
+def AddGroup(groupName, userList=[]):
+    if GroupExists(groupName):
+        raise GroupAlreadyExistsError(groupName)
+
+    group = Group(groupName)
+    for user in userList:
+        group.addUser(group)
+
+    group.saveGroupRuleFile()
+
+    return group
+
+
+def GroupExists(groupName):
+    return os.path.exists(GetGroupRulePath(groupName))
+
+
+def GetGroupRulePath(groupName):
+    return "%s/.%s.rules" % (
+        config.GROUP_DIR,
+        groupName
+        )
+
+
+def DeleteGroup(groupName):
+    if not GroupExists(groupName):
+        raise GroupDoesNotExistError(groupName)
+
+    group = PopulateGroup(groupName)
+    if not group:
+        return group
+
+    group.delete()
+    return group
+
+
+def PopulateGroup(groupName):
+    groupRulePath = GetGroupRulePath(groupName)
+
+    if not os.path.exists(groupRulePath):
+        return None
+
+    with open(groupRulePath, "rb") as groupRuleFile:
+        csvReader = config.getCSVReader(groupRuleFile)
+        groupData = []
+        for line in csvReader:
+            groupData.append(line)
+
+        group = Group(groupName)
+        for line in groupData:
+            userName = line[0]
+            if userName:
+                user = PopulateUser(userName)
+                if user:
+                    group.addUser(user)
+
+    return group

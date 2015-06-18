@@ -14,6 +14,10 @@ class User:
         self.passwordHash = passwordHash
         self.userEmail = userEmail
 
+    def __eq__(self, other):
+        # usernames are unique
+        return self.username == other.username
+
     @property
     def username(self):
         """The User's unique username"""

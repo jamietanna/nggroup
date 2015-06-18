@@ -22,6 +22,12 @@ class AlreadyExistsError(Exception):
         return self.message
 
 
+class GroupAlreadyExistsError(AlreadyExistsError):
+
+    def __init__(self, whatAlreadyExists):
+        super(GroupAlreadyExistsError, self).__init__("group", whatAlreadyExists)
+
+
 class UserAlreadyExistsError(AlreadyExistsError):
 
     def __init__(self, whatAlreadyExists):
@@ -65,3 +71,9 @@ class UserDoesNotExistInGroupError(DoesNotExistError):
 
     def __init__(self, whichUserDoesNotExist, whichGroupDoesNotExistIn):
         super(UserDoesNotExistInGroupError, self).__init__("user", whichUserDoesNotExist, "group", whichGroupDoesNotExistIn)
+
+
+class GroupDoesNotExistError(DoesNotExistError):
+
+    def __init__(self, whatDoesNotExist):
+        super(GroupDoesNotExistError, self).__init__("group", whatDoesNotExist)

@@ -1,6 +1,7 @@
 ROOT_DIR = "."
 
 USER_DIR = "%s/users" % ROOT_DIR
+GROUP_DIR = "%s/groups" % ROOT_DIR
 
 import csv
 
