@@ -3,12 +3,19 @@
 
 class AlreadyExistsError(Exception):
 
-    def __init__(self, typeOfError, whatAlreadyExists):
-        self.typeOfError = typeOfError
-        self.whatAlreadyExists = whatAlreadyExists
-        self.message = "The %s `%s` already exists." % (
-            self.typeOfError,
-            self.whatAlreadyExists
+    def __init__(self, typeOfWhatExists, whatAlreadyExists, typeOfWhatExistsIn="", whatAlreadyExistsIn=""):
+
+        existsInStr = ""
+        if typeOfWhatExistsIn and whatAlreadyExistsIn:
+            existsInStr = " in the %s `%s`" % (
+                typeOfWhatExistsIn,
+                whatAlreadyExistsIn
+                )
+
+        self.message = "The %s `%s` already exists%s." % (
+            typeOfWhatExists,
+            whatAlreadyExists,
+            existsInStr
             )
 
     def __str__(self):
@@ -23,12 +30,19 @@ class UserAlreadyExistsError(AlreadyExistsError):
 
 class DoesNotExistError(Exception):
 
-    def __init__(self, typeOfError, whatDoesNotExist):
-        self.typeOfError = typeOfError
-        self.whatDoesNotExist = whatDoesNotExist
-        self.message = "The %s `%s` does not exist." % (
-            self.typeOfError,
-            self.whatDoesNotExist
+    def __init__(self, typeOfWhatDoesNotExist, whatDoesNotExist, typeOfWhatDoesNotExistIn="", whatDoesNotExistIn=""):
+
+        doesNotExistInStr = ""
+        if typeOfWhatDoesNotExistIn and whatDoesNotExistIn:
+            doesNotExistInStr = " in the %s `%s`" % (
+                typeOfWhatDoesNotExistIn,
+                whatDoesNotExistIn
+                )
+
+        self.message = "The %s `%s` does not exist%s." % (
+            typeOfWhatDoesNotExist,
+            whatDoesNotExist,
+            doesNotExistInStr
             )
 
     def __str__(self):
