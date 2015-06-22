@@ -20,11 +20,8 @@ class TestUserObject(unittest.TestCase):
 
         # then loop through our Users, cleaning up as we go
         for user in users:
-            try:
+            if UserExists(user.username):
                 DeleteUser(user.username)
-            except UserDoesNotExistError:
-                # it doesn't matter if we can't delete a user that doesn't exist
-                continue
 
     def tearDown(self):
         self.cleanUpWorkingDirectory()
@@ -124,10 +121,6 @@ class TestUserObject(unittest.TestCase):
         self.assertEqual(USERNAME, user.username)
         self.assertEqual(PASSWORDHASH, user.passwordHash)
         self.assertEqual(USEREMAIL, user.userEmail)
-
-        NEW_USERNAME = "jvtanna"
-        user.username = NEW_USERNAME
-        self.assertEquals(NEW_USERNAME, user.username)
 
     def test_deleteRealUser(self):
         USERNAME = self.users[0].username

@@ -5,22 +5,19 @@ import config
 from nggroup_exceptions import UserAlreadyExistsInGroup, GroupAlreadyExistsError, GroupDoesNotExistError, UserDoesNotExistInGroupError
 
 from user import PopulateUser
+from unit import Unit
 
 
-class Group:
+class Group(Unit):
 
     def __init__(self, groupName):
-        self.groupName = groupName
+        super(Group, self).__init__(groupName)
         self.userList = {}
 
     @property
     def groupName(self):
         """The Group's name"""
-        return self._groupName
-
-    @groupName.setter
-    def groupName(self, value):
-        self._groupName = value
+        return self.unitName
 
     @property
     def userList(self):
@@ -29,6 +26,52 @@ class Group:
     @userList.setter
     def userList(self, value):
         self._userList = value
+
+    def getUnitRulePath(self):
+        return GetGroupRulePath(self.groupName)
+
+    def getGroupRulePath(self):
+        return self.getUnitRulePath()
+
+    def getUnitConfigPath(self):
+        return GetGroupConfigPath(self.groupName)
+
+    def getGroupConfigPath(self):
+        return self.getUnitConfigPath()
+
+    def saveUnitRule(self):
+        if not self.userList:
+            # we want to just create the file, making sure it's there, even if it's not a CSV
+            # http://stackoverflow.com/a/12654798
+            open(self.getGroupRulePath(), "wb+").close()
+            return
+
+        self.saveCSVFile(self.getGroupRulePath(), [
+            [
+                self.groupName,
+                self.passwordHash,
+                self.groupEmail
+            ]
+            ])
+
+    def saveGroupRule(self):
+        return self.saveUnitRule()
+
+    def saveUnitConfig(self):
+        raise NotImplementedError
+
+    def saveGroupConfig(self):
+        return self.saveUnitConfig()
+
+    def generate(self):
+        self.saveGroupRule()
+        self.saveGroupConfig()
+
+    def unitExists(self):
+        return GroupExists(self.groupName)
+
+    def groupExists(self):
+        return self.unitExists()
 
     def isUserInGroup(self, username):
         return username in self.userList
@@ -44,9 +87,6 @@ class Group:
             raise UserDoesNotExistInGroupError(user.username, self.groupName)
 
         del self.userList[user.username]
-
-    def getGroupRulePath(self):
-        return GetGroupRulePath(self.groupName)
 
     def saveGroupRuleFile(self):
         if not self.userList:
@@ -87,6 +127,10 @@ def GetGroupRulePath(groupName):
         config.GROUP_DIR,
         groupName
         )
+
+
+def GetGroupConfigPath(groupName):
+    raise NotImplementedError
 
 
 def DeleteGroup(groupName):
